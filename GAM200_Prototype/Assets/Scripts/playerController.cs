@@ -7,7 +7,11 @@ public class playerController : MonoBehaviour
     /* For player state, input & control
         Player movement
         Player input
-        Player state (if have)
+        Player state (if have -> shadow or physical state, dead alive etc)
+
+        ** See if want to handle player and shadow movement in 1 single script or separates it.
+        ** See if want to handle the switching of merged or split state here or separated scripts
+        ** See if want to handle player interaction with shadow/physical objects here or separated
      */
 
     void Start()
