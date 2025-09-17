@@ -20,11 +20,12 @@ public class playerController : MonoBehaviour
     public float jumpspeed = 10f;
 
     private BoxCollider2D boxCollider;
-
     private Rigidbody2D rb;
-    private Animator animator;
 
-    private bool isGrounded = false;
+    private bool isGrounded = false; // check for jumping
+
+    //animation
+    private Animator animator;
     private bool isWalking = false;
 
     void Start()
@@ -38,6 +39,8 @@ public class playerController : MonoBehaviour
     void Update()
     {
         PlayerMovement();
+
+        ShadowSwitchMode();
     }
     
     void PlayerMovement()
@@ -60,5 +63,13 @@ public class playerController : MonoBehaviour
     private void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
+    }
+
+    void ShadowSwitchMode()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+
+        }
     }
 }
