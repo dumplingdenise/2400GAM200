@@ -26,7 +26,7 @@ public class playerController : MonoBehaviour
 
     //animation
     private Animator animator;
-    private bool isWalking = false;
+    //private bool isWalking = false;
 
     void Start()
     {
@@ -40,7 +40,6 @@ public class playerController : MonoBehaviour
     {
         PlayerMovement();
 
-        ShadowSwitchMode();
     }
     
     void PlayerMovement()
@@ -65,11 +64,4 @@ public class playerController : MonoBehaviour
         isGrounded = false;
     }
 
-    void ShadowSwitchMode()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-
-        }
-    }
 }
