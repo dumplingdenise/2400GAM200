@@ -1,6 +1,4 @@
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem.Android.LowLevel;
 
 public class gameController : MonoBehaviour
 {
@@ -20,12 +18,29 @@ public class gameController : MonoBehaviour
     }
 
     [SerializeField] private GameObject mainDoll, shadowDoll;
-
     public GameState currentMode;
+
+    // switching for player movement control
+    [SerializeField] playerController playerMove;
+    [SerializeField] ShadowMovement shadowMove;
+
+    //player recall function
+    [SerializeField] float recallSpeed = 7f;
+    [SerializeField] float arriveThreshold = 0.15f;
+    private bool isRecalling;
+    private Rigidbody2D playerrb;
+
+    public bool IsRecalling => isRecalling;
+
+    private Rigidbody2D shadowRb;
 
     void Start()
     {
+        // start with main player state
         currentMode = GameState.Real;
+        playerrb = mainDoll.GetComponent<Rigidbody2D>();
+        shadowRb = shadowDoll.GetComponent<Rigidbody2D>();
+        SetControlForMode();
     }
 
     // Update is called once per frame
@@ -36,20 +51,83 @@ public class gameController : MonoBehaviour
 
     void ShadowSwitchMode()
     {
+        //check if previous mode is shadow to decide for the recall function
+        bool wasShadow = (currentMode == GameState.Shadow);
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (currentMode == GameState.Real)
             {
                 currentMode = GameState.Shadow;
                 Debug.Log("Now controlling: " + currentMode);
+                SetControlForMode();
             }
             else
             {
                 currentMode = GameState.Real;
                 Debug.Log("Now controlling: " + currentMode);
+                isRecalling = wasShadow;
+
+                var sv = shadowRb.linearVelocity;
+                sv = Vector2.zero;
+                shadowRb.linearVelocity = sv;
+
+                // zero out player's x velocity so recall doesnt fight momentum
+                var v = playerrb.linearVelocity; 
+                v.x = 0f;
+                playerrb.linearVelocity = v;
+                SetControlForMode();
             }
 
         }
     }
 
+    void SetControlForMode()
+    {
+       
+        if (currentMode == GameState.Real)
+        {
+            playerMove.enabled = !isRecalling;
+            shadowMove.enabled = false;
+        }
+        else if (currentMode == GameState.Shadow)
+        {
+            playerMove.enabled = false;
+            shadowMove.enabled = true;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (!isRecalling)
+        {
+            return;
+        }
+
+        // current player position
+        Vector2 p = playerrb.position;
+
+        //target is shadow's x, keep player's current Y
+        float targetX = shadowDoll.transform.position.x;
+
+        //move a small step towards the target X
+        float step = recallSpeed * Time.fixedDeltaTime;
+        float newX  = Mathf.MoveTowards(p.x, targetX, step);
+
+        //apply horizontal move 
+        playerrb.MovePosition(new Vector2(newX, p.y));
+
+        //if close enough on X, finish recall cleanly
+        if (Mathf.Abs(newX - targetX) <= arriveThreshold)
+        {
+            //snap exactly to target X, preventing small residual drift)
+            playerrb.MovePosition(new Vector2(targetX, p.y));
+            
+            //end recall
+            isRecalling = false;
+            currentMode = GameState.Real;
+            SetControlForMode();
+        }
+
+    }
 }
