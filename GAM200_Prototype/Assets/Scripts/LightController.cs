@@ -9,10 +9,13 @@ public class LightController : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    // test shadow
+    /*// test shadow
     public Vector2 currentDirection = Vector2.down;
     private ShadowSource[] shadowSources;
+    public Light2D spotLight;*/
 
+
+    private ShadowSource[] shadowSources;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -28,8 +31,9 @@ public class LightController : MonoBehaviour
         }
         rb.freezeRotation = true; // stops spinning from collisions
 
-        //test shadow
+        /*//test shadow
         shadowSources = FindObjectsOfType<ShadowSource>();
+        UpdateShadows();*/
     }
 
     // Update is called once per frame
@@ -37,6 +41,9 @@ public class LightController : MonoBehaviour
     {
         HandleLightMovement();
         HandleRotationInput();
+
+        /*// test shadow
+        UpdateShadows(); // update continuously to check if objects are in beam*/
     }
 
     void HandleLightMovement()
@@ -52,7 +59,6 @@ public class LightController : MonoBehaviour
 
     void HandleRotationInput()
     {
-        // Example: rotate 90° clockwise each time you press Space
         if (Input.GetKeyDown(KeyCode.F))
         {
             currentRotation += rotationStep;
@@ -60,34 +66,46 @@ public class LightController : MonoBehaviour
 
             transform.rotation = Quaternion.Euler(0, 0, currentRotation);
 
-            // test shadow
+            /*// test shadow
             // Update currentDirection based on rotation
             currentDirection = AngleToDirection(currentRotation);
 
             // Tell all shadows to update
-            UpdateShadows();
+            *//*UpdateShadows();*/
         }
     }
 
-    // test shadow
-    // Convert rotation angle to direction vector
-    Vector2 AngleToDirection(float angle)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        angle = Mathf.Round(angle) % 360;
+        if (collision.tag == "Platforms")
+        {
+            Debug.Log("Light shining platform");
 
-        if (Mathf.Approximately(angle, 0f)) return Vector2.up;
-        if (Mathf.Approximately(angle, 90f)) return Vector2.left;
-        if (Mathf.Approximately(angle, 180f)) return Vector2.down;
-        if (Mathf.Approximately(angle, 270f) || Mathf.Approximately(angle, -90f)) return Vector2.right;
-
-        return Vector2.down; // fallback
+            // If this platform has a ShadowSource, update its shadow
+            ShadowSource src = collision.GetComponent<ShadowSource>();
+            if (src != null)
+                src.ShowShadow(transform.up);
+        }
+    }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Platforms"))
+        {
+            ShadowSource src = collision.GetComponent<ShadowSource>();
+            if (src != null)
+                src.ShowShadow(transform.up); // keep updating shadow direction
+        }
     }
 
-    void UpdateShadows()
+    private void OnTriggerExit2D(Collider2D collision)
     {
-        foreach (var src in shadowSources)
+        if (collision.tag == "Platforms")
         {
-            src.UpdateShadow(currentDirection);
+            Debug.Log("Light not shining on platforms");
+
+            ShadowSource src = collision.GetComponent<ShadowSource>();
+            if (src != null)
+                src.HideShadow();
         }
     }
 }

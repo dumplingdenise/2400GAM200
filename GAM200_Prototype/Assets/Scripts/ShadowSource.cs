@@ -1,9 +1,20 @@
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class ShadowSource : MonoBehaviour
 {
     public GameObject shadowObject;       // Assign the shadow child (platformShadow)
-    public ShadowConfig shadowConfig;     // Assign a ShadowConfig asset
+
+    [Header("Shadow setting")]
+    public Vector2 offsetUp;
+    public Vector2 offsetDown;
+    public Vector2 offsetLeft;
+    public Vector2 offsetRight;
+
+    /*public Vector2 scale = Vector2.one;*/
+
+    /*// new item
+    private Vector3 targetOffset;*/
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -16,20 +27,29 @@ public class ShadowSource : MonoBehaviour
         
     }
 
-    public void UpdateShadow(Vector2 lightDir)
+    public void ShowShadow(Vector2 lightDir)
     {
-        if (shadowObject == null || shadowConfig == null) return;
+        if (shadowObject == null) return;
 
-        if (lightDir == Vector2.up)
-            shadowObject.transform.localPosition = shadowConfig.offsetUp;
-        else if (lightDir == Vector2.down)
-            shadowObject.transform.localPosition = shadowConfig.offsetDown;
-        else if (lightDir == Vector2.left)
-            shadowObject.transform.localPosition = shadowConfig.offsetLeft;
-        else if (lightDir == Vector2.right)
-            shadowObject.transform.localPosition = shadowConfig.offsetRight;
+        Vector3 newOffset = Vector3.zero;
 
-        shadowObject.transform.localScale = shadowConfig.scale;
+        if (Vector2.Dot(lightDir, Vector2.up) > 0.9f)
+            newOffset = offsetUp;
+        else if (Vector2.Dot(lightDir, Vector2.down) > 0.9f)
+            newOffset = offsetDown;
+        else if (Vector2.Dot(lightDir, Vector2.left) > 0.9f)
+            newOffset = offsetLeft;
+        else if (Vector2.Dot(lightDir, Vector2.right) > 0.9f)
+            newOffset = offsetRight;
+
+        shadowObject.transform.localPosition = newOffset;
+        shadowObject.transform.localPosition += new Vector3(0, 0, 1); // keep behind
         shadowObject.SetActive(true);
+    }
+
+    public void HideShadow()
+    {
+        if (shadowObject != null)
+            shadowObject.SetActive(false);
     }
 }
