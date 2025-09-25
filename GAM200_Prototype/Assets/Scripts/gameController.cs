@@ -99,6 +99,7 @@ public class gameController : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Only run recall logic while we're auto-walking the player to the shadow.
         if (!isRecalling)
         {
             return;
@@ -110,24 +111,32 @@ public class gameController : MonoBehaviour
         //target is shadow's x, keep player's current Y
         float targetX = shadowDoll.transform.position.x;
 
-        //move a small step towards the target X
-        float step = recallSpeed * Time.fixedDeltaTime;
-        float newX  = Mathf.MoveTowards(p.x, targetX, step);
+        // how far away from the target on the x-asix
+        float distX = Mathf.Abs(p.x - targetX);
 
-        //apply horizontal move 
-        playerrb.MovePosition(new Vector2(newX, p.y));
+        // Which direction to move in X? (+1 right, -1 left, 0 if already aligned)
+        float dirX = Mathf.Sign(targetX - p.x);
 
-        //if close enough on X, finish recall cleanly
-        if (Mathf.Abs(newX - targetX) <= arriveThreshold)
+        // Desired horizontal velocity: move at recallSpeed until we're "close enough",
+        // then stop (0) so we can snap once and finish recall without jitter.
+        float desiredVX = (distX > arriveThreshold) ? dirX * recallSpeed : 0f;
+
+        // Apply ONLY the X velocity; keep whatever Y velocity physics has (gravity, slopes).
+        var v = playerrb.linearVelocity;
+        v.x = desiredVX;
+        playerrb.linearVelocity = v;
+
+        // If within the "close enough" band on X, finish recall cleanly.
+        if (distX <= arriveThreshold)
         {
-            //snap exactly to target X, preventing small residual drift)
-            playerrb.MovePosition(new Vector2(targetX, p.y));
-            
-            //end recall
+            // Snap exactly to the shadow's X once (prevents tiny drift),
+            // but DO NOT touch Y so it doesn't fight gravity/grounding.
+            playerrb.position = new Vector2 (targetX, playerrb.position.y);
+
+            // End recall and hand control back to the player.
             isRecalling = false;
             currentMode = GameState.Real;
             SetControlForMode();
         }
-
     }
 }

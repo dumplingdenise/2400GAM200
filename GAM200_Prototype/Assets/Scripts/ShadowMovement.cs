@@ -46,6 +46,7 @@ public class ShadowMovement : MonoBehaviour
 
     void shadowMovement()
     {
+
         float moveInput = Input.GetAxis("Horizontal");
 
         if (Mathf.Abs(moveInput) < 0.01f) moveInput = 0f; // deadzone (helps avoid flicker)
