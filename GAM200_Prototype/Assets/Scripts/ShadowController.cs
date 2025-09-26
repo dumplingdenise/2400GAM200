@@ -13,6 +13,9 @@ public class ShadowController : MonoBehaviour
     private gameController controller;
 
     private Rigidbody2D shadowrb;
+    private Rigidbody2D playerRb;
+
+    private float originalGravity;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -21,8 +24,12 @@ public class ShadowController : MonoBehaviour
         
         shadowrb = GetComponent<Rigidbody2D>();
 
+        playerRb = mainDoll.GetComponent<Rigidbody2D>();
+
         // Small polish: Interpolate on the RB for smoother visuals when moved by MovePosition
         if (shadowrb) shadowrb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        originalGravity = shadowrb.gravityScale;
     }
 
     // Update is called once per frame
@@ -35,27 +42,32 @@ public class ShadowController : MonoBehaviour
     {
         if (controller == null) return;
 
-        if (controller.IsRecalling) return;
+        shadowrb.gravityScale = originalGravity;
+
+        if (controller.IsRecalling) 
+        {
+            return; 
+        }
 
         // Only follow when the game is in Real mode (player controls main doll).
         if (controller.currentMode != gameController.GameState.Real) return;
 
-        // Current shadow position (RB space).
         Vector2 currentPos = shadowrb.position;
 
-        // Target = main doll position + desired offset.
-        Vector2 targetPos = mainDoll.position;
-        targetPos += offset;
+        //shadowrb.gravityScale = 0;
 
-        // If close enough, don’t move (avoids buzzing at the end).
-        float dist = Vector2.Distance(currentPos, targetPos);
-        if (dist <= stopDistance) return; 
+        float targetX = playerRb.position.x + offset.x;
 
-        float step = followSpeed * Time.fixedDeltaTime;
+        float dx = Mathf.Abs(currentPos.x - targetX);
+        if (dx <= stopDistance)
+        {
+            Vector2 pos = shadowrb.position;
+            pos.x = targetX;
+            shadowrb.position = pos;
+            return;
+        }
 
-        Vector2 nextPos = Vector2.MoveTowards(currentPos, targetPos, step);
-
-        shadowrb.MovePosition(nextPos);
+        shadowrb.MovePosition(new Vector2(targetX, currentPos.y));
 
     }
 }
