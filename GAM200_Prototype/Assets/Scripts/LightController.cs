@@ -9,21 +9,15 @@ public class LightController : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    /*// test shadow
-    public Vector2 currentDirection = Vector2.down;
-    private ShadowSource[] shadowSources;
-    public Light2D spotLight;*/
+    // with movement animation
+    public float speed = 20f;
+    private Vector3 target;
 
 
     private ShadowSource[] shadowSources;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        /*if (light2D == null)
-        {
-            Debug.LogWarning("No Light2D component found. Add one to this GameObject.");
-        }*/
-
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
@@ -31,9 +25,7 @@ public class LightController : MonoBehaviour
         }
         rb.freezeRotation = true; // stops spinning from collisions
 
-        /*//test shadow
-        shadowSources = FindObjectsOfType<ShadowSource>();
-        UpdateShadows();*/
+        target = transform.position; // for movement animation
     }
 
     // Update is called once per frame
@@ -41,20 +33,26 @@ public class LightController : MonoBehaviour
     {
         HandleLightMovement();
         HandleRotationInput();
-
-        /*// test shadow
-        UpdateShadows(); // update continuously to check if objects are in beam*/
     }
 
     void HandleLightMovement()
     {
-        // Only move light when left mouse button is held down
+        // with movement animation
         if (Input.GetMouseButton(0)) // 0 = Left Click, 1 = Right Click
+        {
+            target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            target.z = transform.position.z;
+        }
+
+        Vector3 newPos = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+        rb.MovePosition(newPos);
+
+        /*if (Input.GetMouseButton(0))
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0f; // lock to 2D plane
             rb.MovePosition(mousePos);
-        }
+        }*/
     }
 
     void HandleRotationInput()
@@ -66,12 +64,6 @@ public class LightController : MonoBehaviour
 
             transform.rotation = Quaternion.Euler(0, 0, currentRotation);
 
-            /*// test shadow
-            // Update currentDirection based on rotation
-            currentDirection = AngleToDirection(currentRotation);
-
-            // Tell all shadows to update
-            *//*UpdateShadows();*/
         }
     }
 
