@@ -583,7 +583,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.000033416087}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -593,7 +593,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.01, y: 0.01}
+  m_Size: {x: 0.01, y: 0.010116953}
   m_EdgeRadius: 0
 --- !u!212 &1145244434
 SpriteRenderer:
@@ -797,8 +797,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainDoll: {fileID: 714298551}
   offset: {x: -1.5, y: 0}
-  followSpeed: 6
-  stopDistance: 0.16
+  followSpeed: 8
+  stopDistance: 0.12
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 512
+  groundCheckDistance: 0.1
+  groundCheckOffset: {x: 0, y: -0.1}
 --- !u!61 &1267856436
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -955,8 +960,6 @@ MonoBehaviour:
   currentMode: 0
   playerMove: {fileID: 714298553}
   shadowMove: {fileID: 1267856437}
-  recallSpeed: 7
-  arriveThreshold: 0.15
 --- !u!4 &1611770036
 Transform:
   m_ObjectHideFlags: 0

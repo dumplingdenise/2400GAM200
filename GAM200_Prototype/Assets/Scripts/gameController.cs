@@ -11,6 +11,8 @@ public class gameController : MonoBehaviour
         Handles respawning when player die (**TBC if script separated or not yet)
         Control UI Menus (**TBC if script separated or not yet)    
      */
+
+    //game state to switch
     public enum GameState
     {
         Real,
@@ -24,22 +26,38 @@ public class gameController : MonoBehaviour
     [SerializeField] playerController playerMove;
     [SerializeField] ShadowMovement shadowMove;
 
-    //player recall function
-    [SerializeField] float recallSpeed = 7f;
-    [SerializeField] float arriveThreshold = 0.15f;
-    private bool isRecalling;
+    // rigidbody referennces for physics control
     private Rigidbody2D playerrb;
-
-    public bool IsRecalling => isRecalling;
-
     private Rigidbody2D shadowRb;
+
+    //components of the main player (to disable/enable visuals & colliders)
+    SpriteRenderer[] mainRenderers;
+    Collider2D[] mainColliders;
+    Animator mainAnimator;
+    bool wasSimulated; // rmb if physics was acive before hiding
+
+    // for deferred reappearance
+    bool pendingReappear;
+    Vector2 pendingPos;
 
     void Start()
     {
         // start with main player state
         currentMode = GameState.Real;
+
+        //cache references to main doll's rigidbody and components
         playerrb = mainDoll.GetComponent<Rigidbody2D>();
+        mainRenderers = mainDoll.GetComponentsInChildren<SpriteRenderer>(true);
+        mainColliders = mainDoll.GetComponentsInChildren<Collider2D>(true);
+        mainAnimator = mainDoll.GetComponentInChildren<Animator>();
+        wasSimulated = playerrb.simulated;
+
+        //cache shadow rigidbody
         shadowRb = shadowDoll.GetComponent<Rigidbody2D>();
+
+        //use interpolation so moements looks smooth
+        playerrb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
         SetControlForMode();
     }
 
@@ -52,31 +70,36 @@ public class gameController : MonoBehaviour
     void ShadowSwitchMode()
     {
         //check if previous mode is shadow to decide for the recall function
-        bool wasShadow = (currentMode == GameState.Shadow);
+        // bool wasShadow = (currentMode == GameState.Shadow);
 
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (currentMode == GameState.Real)
             {
+                // switch to shadow mode
                 currentMode = GameState.Shadow;
                 Debug.Log("Now controlling: " + currentMode);
+
+                // position shadow at main player's current position
+                shadowRb.position = mainDoll.transform.position;
+                HideMain(); //hide main player
                 SetControlForMode();
             }
             else
             {
-                currentMode = GameState.Real;
+               // currentMode = GameState.Real;
                 Debug.Log("Now controlling: " + currentMode);
-                isRecalling = wasShadow;
+                // isRecalling = wasShadow;
 
-                var sv = shadowRb.linearVelocity;
-                sv = Vector2.zero;
-                shadowRb.linearVelocity = sv;
+                //mark the real  body shoudl reappear in physics update
+                pendingReappear = true;
+                pendingPos = shadowDoll.transform.position;
 
                 // zero out player's x velocity so recall doesnt fight momentum
-                var v = playerrb.linearVelocity; 
+                var v = playerrb.linearVelocity;
                 v.x = 0f;
                 playerrb.linearVelocity = v;
-                SetControlForMode();
+
             }
 
         }
@@ -84,59 +107,99 @@ public class gameController : MonoBehaviour
 
     void SetControlForMode()
     {
-       
+
+        int shadowPlayerLayer = LayerMask.NameToLayer("Shadow");
+        int shadowWorldLayer = LayerMask.NameToLayer("ShadowWorld");
+
         if (currentMode == GameState.Real)
         {
-            playerMove.enabled = !isRecalling;
+            playerMove.enabled = true;
             shadowMove.enabled = false;
+            Physics2D.IgnoreLayerCollision(shadowPlayerLayer, shadowWorldLayer, true);
+           
         }
         else if (currentMode == GameState.Shadow)
         {
             playerMove.enabled = false;
             shadowMove.enabled = true;
+            Physics2D.IgnoreLayerCollision(shadowPlayerLayer, shadowWorldLayer, false);
+        }
+    }
+
+    //hide main doll 
+    void HideMain()
+    {
+        wasSimulated = playerrb.simulated;
+        playerrb.linearVelocity = Vector2.zero;
+
+        //disable all renderes and colliders
+        foreach (var r in mainRenderers)
+        {
+            r.enabled = false;
+        }
+
+        foreach (var c in mainColliders)
+        {
+            c.enabled = false;
+        }
+
+        if (mainAnimator != null)
+        {
+            mainAnimator.enabled = false;
+        }
+
+        //turn off physics simulation
+        playerrb.simulated = false;
+
+    }
+
+    //show main body at the given position
+    void ShowMainAt(Vector2 pos)
+    {
+        //temporarily disbale interpolation to avoid 'lerp from old spot'
+        var oldInterp = playerrb.interpolation;
+        playerrb.interpolation = RigidbodyInterpolation2D.None;
+
+        //set both the Transform (visuals) and Rigidbody (physics)
+        mainDoll.transform.position = pos;
+        playerrb.position = pos;
+
+        // Reset velocity & re-enable physics
+        playerrb.linearVelocity = Vector2.zero;
+        playerrb.simulated = wasSimulated;
+
+        // Restore interpolation
+        playerrb.interpolation = oldInterp;
+
+        // Re-enable all renderers and colliders
+        foreach (var r in mainRenderers)
+        {
+            r.enabled = true;
+        }
+
+        foreach (var c in mainColliders)
+        {
+            c.enabled = true;
+        }
+
+        if (mainAnimator != null)
+        {
+            mainAnimator.enabled = true;
         }
     }
 
     void FixedUpdate()
     {
-        // Only run recall logic while we're auto-walking the player to the shadow.
-        if (!isRecalling)
+        // Reappear is done here so physics + visuals are in sync
+        if (pendingReappear)
         {
-            return;
-        }
-
-        // current player position
-        Vector2 p = playerrb.position;
-
-        //target is shadow's x, keep player's current Y
-        float targetX = shadowDoll.transform.position.x;
-
-        // how far away from the target on the x-asix
-        float distX = Mathf.Abs(p.x - targetX);
-
-        // Which direction to move in X? (+1 right, -1 left, 0 if already aligned)
-        float dirX = Mathf.Sign(targetX - p.x);
-
-        // Desired horizontal velocity: move at recallSpeed until we're "close enough",
-        // then stop (0) so we can snap once and finish recall without jitter.
-        float desiredVX = (distX > arriveThreshold) ? dirX * recallSpeed : 0f;
-
-        // Apply ONLY the X velocity; keep whatever Y velocity physics has (gravity, slopes).
-        var v = playerrb.linearVelocity;
-        v.x = desiredVX;
-        playerrb.linearVelocity = v;
-
-        // If within the "close enough" band on X, finish recall cleanly.
-        if (distX <= arriveThreshold)
-        {
-            // Snap exactly to the shadow's X once (prevents tiny drift),
-            // but DO NOT touch Y so it doesn't fight gravity/grounding.
-            playerrb.position = new Vector2 (targetX, playerrb.position.y);
-
-            // End recall and hand control back to the player.
-            isRecalling = false;
+            ShowMainAt(pendingPos);
+            var sc = FindAnyObjectByType<ShadowController>();
+            sc.ArmFollowCooldown(4);
+            sc.needInitialAlign = true;
             currentMode = GameState.Real;
             SetControlForMode();
+            pendingReappear = false;
         }
     }
 }

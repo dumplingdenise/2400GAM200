@@ -33,6 +33,11 @@ public class ShadowMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
         controller = FindAnyObjectByType<gameController>();
+
+        if (shadowrb != null)
+        {
+            shadowrb.gravityScale = 1.0f;
+        }
         
     }
 
