@@ -26,7 +26,7 @@ public class playerController : MonoBehaviour
 
     //animation
     private Animator animator;
-    private bool isWalking = false;
+    //private bool isWalking = false;
 
     void Start()
     {
@@ -40,12 +40,16 @@ public class playerController : MonoBehaviour
     {
         PlayerMovement();
 
-        ShadowSwitchMode();
     }
     
     void PlayerMovement()
     {
         float moveInput = Input.GetAxis("Horizontal");
+
+        if (Mathf.Abs(moveInput) < 0.01f)
+        {
+            moveInput = 0f;
+        }
 
         rb.linearVelocity = new Vector2(moveInput * speed, rb.linearVelocity.y);
 
@@ -53,23 +57,37 @@ public class playerController : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpspeed);
         }
+
+        var s = transform.localScale;
+
+        if (moveInput > 0)
+        {
+            s.x = +1f;
+        }
+        else if (moveInput < 0)
+        {
+            s.x = -1f;
+        }
+        else
+        {
+          
+        }
+
+        transform.localScale = s;
+
+       // animator.SetFloat("Speed", Mathf.Abs(moveInput));
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         isGrounded = true;
+       // animator.SetBool("Grounded", isGrounded);
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
         isGrounded = false;
+       // animator.SetBool("Grounded", isGrounded);
     }
 
-    void ShadowSwitchMode()
-    {
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-
-        }
-    }
 }
