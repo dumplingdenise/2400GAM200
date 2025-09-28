@@ -10,8 +10,8 @@ public class LightController : MonoBehaviour
     private Rigidbody2D rb;
 
     // with movement animation
-    public float speed = 20f;
-    private Vector3 target;
+    /*public float speed = 20f;
+    private Vector3 target;*/
 
 
     private ShadowSource[] shadowSources;
@@ -25,7 +25,7 @@ public class LightController : MonoBehaviour
         }
         rb.freezeRotation = true; // stops spinning from collisions
 
-        target = transform.position; // for movement animation
+        /*target = transform.position;*/ // for movement animation
     }
 
     // Update is called once per frame
@@ -38,21 +38,22 @@ public class LightController : MonoBehaviour
     void HandleLightMovement()
     {
         // with movement animation
-        if (Input.GetMouseButton(0)) // 0 = Left Click, 1 = Right Click
+        /*if (Input.GetMouseButton(0)) // 0 = Left Click, 1 = Right Click
         {
             target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             target.z = transform.position.z;
         }
 
         Vector3 newPos = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
-        rb.MovePosition(newPos);
+        rb.MovePosition(newPos);*/
 
-        /*if (Input.GetMouseButton(0))
+        // without movement animation
+        if (Input.GetMouseButton(0))
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0f; // lock to 2D plane
             rb.MovePosition(mousePos);
-        }*/
+        }
     }
 
     void HandleRotationInput()
