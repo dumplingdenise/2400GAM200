@@ -441,7 +441,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationStep: 90
-  speed: 20
 --- !u!212 &138249511
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1321,7 +1320,7 @@ MonoBehaviour:
     m_Bits: 512
   groundCheckDistance: 0.1
   groundCheckOffset: {x: 0, y: -0.1}
-  needInitialAlign: 0
+  needInitialAlign: 1
 --- !u!61 &1267856436
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1709,7 +1708,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!61 &1750538772
 BoxCollider2D:
   m_ObjectHideFlags: 0

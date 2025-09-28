@@ -40,6 +40,8 @@ public class gameController : MonoBehaviour
     bool pendingReappear;
     Vector2 pendingPos;
 
+    Collider2D[] shadowColliders;
+
     void Start()
     {
         // start with main player state
@@ -57,6 +59,8 @@ public class gameController : MonoBehaviour
 
         //use interpolation so moements looks smooth
         playerrb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        shadowColliders = shadowDoll.GetComponentsInChildren<Collider2D>(true);
 
         SetControlForMode();
     }
@@ -115,6 +119,12 @@ public class gameController : MonoBehaviour
         {
             playerMove.enabled = true;
             shadowMove.enabled = false;
+            foreach (var sc in shadowColliders)
+            {
+                sc.enabled = false;
+            }
+            shadowRb.bodyType = RigidbodyType2D.Kinematic;
+            shadowRb.linearVelocity = Vector2.zero;
             Physics2D.IgnoreLayerCollision(shadowPlayerLayer, shadowWorldLayer, true);
            
         }
@@ -122,6 +132,12 @@ public class gameController : MonoBehaviour
         {
             playerMove.enabled = false;
             shadowMove.enabled = true;
+            shadowRb.bodyType = RigidbodyType2D.Dynamic;
+            foreach (var sc in shadowColliders)
+            {
+                sc.enabled = true;
+            }
+
             Physics2D.IgnoreLayerCollision(shadowPlayerLayer, shadowWorldLayer, false);
         }
     }
