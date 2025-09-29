@@ -12,6 +12,12 @@ public class ShadowController : MonoBehaviour
     [SerializeField] LayerMask groundMask;
     [SerializeField] float groundCheckDistance = 0.1f;
     [SerializeField] Vector2 groundCheckOffset = new Vector2(0f, -0.1f);
+    
+    [SerializeField] float xDamp = 0.10f;
+    [SerializeField] float xMaxSpeed = 12f;
+    
+
+    private float xVelRef;
 
     private gameController controller;
 
@@ -58,6 +64,8 @@ public class ShadowController : MonoBehaviour
             Vector2 target = playerRb.position + offset;
             shadowrb.position = target;
 
+            xVelRef = 0f;
+
             needInitialAlign = false; // reset the flag
             return; // skip the rest of follow logic this frame
         }
@@ -85,12 +93,20 @@ public class ShadowController : MonoBehaviour
 
             if (dx <= stopDistance && Mathf.Abs(currentPos.y - targetY) <= stopDistance)
             {
-                shadowrb.position = new Vector2(targetX, targetY);
+                // shadowrb.position = new Vector2(targetX, targetY);
+
+                float newX = Mathf.SmoothDamp(currentPos.x, targetX, ref xVelRef, xDamp, xMaxSpeed, Time.fixedDeltaTime);
+                float newY = Mathf.Lerp(currentPos.y, targetY, 0.5f);
+                shadowrb.MovePosition(new Vector2(newX, newY));
             }
             else
             {
+                // float newY = Mathf.MoveTowards(currentPos.y, targetY, followSpeed * Time.fixedDeltaTime);
+                //shadowrb.MovePosition(new Vector2(targetX, newY));
+
+                float newX = Mathf.SmoothDamp(currentPos.x, targetX, ref xVelRef, xDamp, xMaxSpeed, Time.fixedDeltaTime);
                 float newY = Mathf.MoveTowards(currentPos.y, targetY, followSpeed * Time.fixedDeltaTime);
-                shadowrb.MovePosition(new Vector2(targetX, newY));
+                shadowrb.MovePosition(new Vector2(newX, newY));
             }
         }
         else
@@ -98,23 +114,28 @@ public class ShadowController : MonoBehaviour
             // When player is grounded, shadow should have normal gravity
             shadowrb.gravityScale = originalGravity;
 
-            if (dx <= stopDistance)
-            {
-                Vector2 pos = shadowrb.position;
-                pos.x = targetX;
-                shadowrb.position = pos;
-            }
-            else
-            {
-                float newX = Mathf.MoveTowards(currentPos.x, targetX, followSpeed * Time.fixedDeltaTime);
-                shadowrb.MovePosition(new Vector2(newX, currentPos.y));
-            }
+            float newX = Mathf.SmoothDamp(currentPos.x, targetX, ref xVelRef, xDamp, xMaxSpeed, Time.fixedDeltaTime);
+            shadowrb.MovePosition(new Vector2(newX, currentPos.y));
+
+            /* if (dx <= stopDistance)
+             {
+                 Vector2 pos = shadowrb.position;
+                 pos.x = targetX;
+                 shadowrb.position = pos;
+             }
+             else
+             {
+                 float newX = Mathf.MoveTowards(currentPos.x, targetX, followSpeed * Time.fixedDeltaTime);
+                 shadowrb.MovePosition(new Vector2(newX, currentPos.y));
+             } */
         }
     }
 
     public void ArmFollowCooldown (int frames)
     {
         followCooldownFrames = frames;
+
+        xVelRef = 0f; // clear velocity ref so next follow starts clean
     }
 }
 

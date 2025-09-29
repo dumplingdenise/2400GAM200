@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Cinemachine;
 
 public class gameController : MonoBehaviour
 {
@@ -42,6 +43,14 @@ public class gameController : MonoBehaviour
 
     Collider2D[] shadowColliders;
 
+    //camera movement
+    [SerializeField] CinemachineCamera vcam;
+
+    //for respawn/checkpoint
+    [SerializeField] Transform startPoint; //where level starts (set in inspector)
+    Transform currentCheckpoint; // last activated checkpoint
+    [SerializeField] Vector2 respawnOffset = new Vector2 (0f, 0.5f); // spawn abit above ground
+
     void Start()
     {
         // start with main player state
@@ -61,6 +70,8 @@ public class gameController : MonoBehaviour
         playerrb.interpolation = RigidbodyInterpolation2D.Interpolate;
 
         shadowColliders = shadowDoll.GetComponentsInChildren<Collider2D>(true);
+
+        currentCheckpoint = (startPoint != null) ? startPoint : mainDoll.transform;
 
         SetControlForMode();
     }
@@ -119,6 +130,9 @@ public class gameController : MonoBehaviour
         {
             playerMove.enabled = true;
             shadowMove.enabled = false;
+
+            vcam.Follow = mainDoll.transform;
+
             foreach (var sc in shadowColliders)
             {
                 sc.enabled = false;
@@ -132,6 +146,9 @@ public class gameController : MonoBehaviour
         {
             playerMove.enabled = false;
             shadowMove.enabled = true;
+
+            vcam.Follow = shadowDoll.transform;
+
             shadowRb.bodyType = RigidbodyType2D.Dynamic;
             foreach (var sc in shadowColliders)
             {
@@ -172,6 +189,8 @@ public class gameController : MonoBehaviour
     //show main body at the given position
     void ShowMainAt(Vector2 pos)
     {
+        var oldPos = playerrb.position;
+
         //temporarily disbale interpolation to avoid 'lerp from old spot'
         var oldInterp = playerrb.interpolation;
         playerrb.interpolation = RigidbodyInterpolation2D.None;
@@ -179,6 +198,8 @@ public class gameController : MonoBehaviour
         //set both the Transform (visuals) and Rigidbody (physics)
         mainDoll.transform.position = pos;
         playerrb.position = pos;
+
+        vcam.OnTargetObjectWarped(mainDoll.transform, (Vector3)pos - (Vector3)oldPos);
 
         // Reset velocity & re-enable physics
         playerrb.linearVelocity = Vector2.zero;
@@ -218,5 +239,19 @@ public class gameController : MonoBehaviour
             SetControlForMode();
             pendingReappear = false;
         }
+    }
+
+    public void SetCheckpoint(Transform cp)
+    {
+        if (cp == null)
+        {
+            // if nothing pass ignore
+            return;
+        }
+    
+        //rmb the most recent checkpoint
+        currentCheckpoint = cp;
+        Debug.Log("Checkpoint set:" + cp.name);
+
     }
 }
