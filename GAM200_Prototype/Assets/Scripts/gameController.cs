@@ -210,6 +210,7 @@ public class gameController : MonoBehaviour
         if (pendingReappear)
         {
             ShowMainAt(pendingPos);
+            //FindAnyObjectByType<CameraController>().SnapToTarget();
             var sc = FindAnyObjectByType<ShadowController>();
             sc.ArmFollowCooldown(4);
             sc.needInitialAlign = true;
