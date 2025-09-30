@@ -75,7 +75,7 @@ public class ShadowController : MonoBehaviour
         // Always start with original gravity
         shadowrb.gravityScale = originalGravity;
 
-        if (controller.currentMode != gameController.GameState.Real) return;
+        if (controller.currentMode != gameController.WorldState.Real) return;
         if (playerRb != null && playerRb.simulated == false) return;
 
         Vector2 currentPos = shadowrb.position;

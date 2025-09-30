@@ -1,5 +1,7 @@
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using static gameController;
 
 public class LightController : MonoBehaviour
 {
@@ -8,10 +10,11 @@ public class LightController : MonoBehaviour
     private float currentRotation = 0f;
 
     private Rigidbody2D rb;
+    private SpriteRenderer sr;
+    private Light2D light;
+    private PolygonCollider2D collider;
 
-    // with movement animation
-    /*public float speed = 20f;
-    private Vector3 target;*/
+    private bool isDragging = false;
 
 
     private ShadowSource[] shadowSources;
@@ -25,33 +28,64 @@ public class LightController : MonoBehaviour
         }
         rb.freezeRotation = true; // stops spinning from collisions
 
-        /*target = transform.position;*/ // for movement animation
+
+        // sprite renderer
+        sr = GetComponent<SpriteRenderer>();
+        if (sr == null)
+        {
+            Debug.LogError("No sprite renderer found");
+        }
+
+        // light 2D
+        light = GetComponentInChildren<Light2D>();
+        if (light == null)
+        {
+            Debug.LogError("Light2D not found");
+        }
+
+        collider = GetComponentInChildren<PolygonCollider2D>();
+        if (collider == null)
+        {
+            Debug.LogError("collider not found");
+        }
+
+        // start ON
+        SetLightActive(true);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        HandleLightMovement();
-        HandleRotationInput();
+        if (gameController.Instance == null) return;
+        if (gameController.Instance.currentGameState == GameState.Paused)
+        {
+            return;
+        }
+        else
+        {
+            HandleLightMovement();
+            HandleRotationInput();
+        }
     }
 
     void HandleLightMovement()
     {
-        // with movement animation
-        /*if (Input.GetMouseButton(0)) // 0 = Left Click, 1 = Right Click
+        if (Input.GetMouseButtonDown(0)) // start dragging
         {
-            target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            target.z = transform.position.z;
+            isDragging = true;
+            SetLightActive(false); // turn OFF light while dragging
+        }
+        else if (Input.GetMouseButtonUp(0)) // release drag
+        {
+            isDragging = false;
+            SetLightActive(true); // turn ON light again
         }
 
-        Vector3 newPos = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
-        rb.MovePosition(newPos);*/
-
-        // without movement animation
-        if (Input.GetMouseButton(0))
+        if (isDragging)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0f; // lock to 2D plane
+            mousePos.z = 0f;
             rb.MovePosition(mousePos);
         }
     }
@@ -100,5 +134,11 @@ public class LightController : MonoBehaviour
             if (src != null)
                 src.HideShadow();
         }
+    }
+
+    void SetLightActive(bool state)
+    {
+        if (light != null) light.enabled = state;
+        if (collider != null) collider.enabled = state;
     }
 }

@@ -24,7 +24,7 @@ public class CameraController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        var t = (controller.currentMode == gameController.GameState.Real) ? mainDoll : shadowDoll;
+        var t = (controller.currentMode == gameController.WorldState.Real) ? mainDoll : shadowDoll;
         prevTargetX = t.position.x;
         currentLookahead = 0f;
     }
@@ -37,7 +37,7 @@ public class CameraController : MonoBehaviour
 
     void LateUpdate()
     {
-        var target = (controller.currentMode == gameController.GameState.Real) ? mainDoll : shadowDoll;
+        var target = (controller.currentMode == gameController.WorldState.Real) ? mainDoll : shadowDoll;
         
         var targetPos = target.position;
 
@@ -65,7 +65,7 @@ public class CameraController : MonoBehaviour
 
     public void SnapToTarget()
     {
-        var t = (controller.currentMode == gameController.GameState.Real) ? mainDoll: shadowDoll;
+        var t = (controller.currentMode == gameController.WorldState.Real) ? mainDoll: shadowDoll;
 
         transform.position = t.position + offset;
 

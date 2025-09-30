@@ -44,7 +44,7 @@ public class ShadowMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (controller.currentMode != gameController.GameState.Shadow) return;
+        if (controller.currentMode != gameController.WorldState.Shadow) return;
 
         shadowMovement();
     }

@@ -1,5 +1,7 @@
 using UnityEngine;
 using Unity.Cinemachine;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class gameController : MonoBehaviour
 {
@@ -13,15 +15,26 @@ public class gameController : MonoBehaviour
         Control UI Menus (**TBC if script separated or not yet)    
      */
 
-    //game state to switch
-    public enum GameState
+    //world state to switch
+    public enum WorldState
     {
         Real,
         Shadow
     }
 
+    // game state
+    public enum GameState
+    {
+        Playing,
+        Paused
+    }
+
+    public GameState currentGameState;
+    public static gameController Instance;
+    public GameObject PausedPanel;
+
     [SerializeField] private GameObject mainDoll, shadowDoll;
-    public GameState currentMode;
+    public WorldState currentMode;
 
     // switching for player movement control
     [SerializeField] playerController playerMove;
@@ -51,10 +64,16 @@ public class gameController : MonoBehaviour
     Transform currentCheckpoint; // last activated checkpoint
     [SerializeField] Vector2 respawnOffset = new Vector2 (0f, 0.5f); // spawn abit above ground
 
+    private void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
+        currentGameState = GameState.Playing;
+
         // start with main player state
-        currentMode = GameState.Real;
+        currentMode = WorldState.Real;
 
         //cache references to main doll's rigidbody and components
         playerrb = mainDoll.GetComponent<Rigidbody2D>();
@@ -80,6 +99,46 @@ public class gameController : MonoBehaviour
     void Update()
     {
         ShadowSwitchMode();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            TogglePause();
+        }
+    }
+
+    void TogglePause()
+    {
+        if (currentGameState == GameState.Playing)
+        {
+            PauseGame();
+        }
+        else
+        {
+            ResumeGame();
+        }
+    }
+
+    public void PauseGame()
+    {
+        currentGameState = GameState.Paused;
+        if (PausedPanel != null)
+        {
+            PausedPanel.SetActive(true);
+        }
+    }
+
+    public void ResumeGame()
+    {
+        currentGameState = GameState.Playing;
+        if (PausedPanel != null)
+        {
+            PausedPanel.SetActive(false);
+        }
+    }
+
+    public void mainMenu()
+    {
+        SceneManager.LoadScene("Menu");
     }
 
     void ShadowSwitchMode()
@@ -89,10 +148,10 @@ public class gameController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
-            if (currentMode == GameState.Real)
+            if (currentMode == WorldState.Real)
             {
                 // switch to shadow mode
-                currentMode = GameState.Shadow;
+                currentMode = WorldState.Shadow;
                 Debug.Log("Now controlling: " + currentMode);
 
                 // position shadow at main player's current position
@@ -126,7 +185,7 @@ public class gameController : MonoBehaviour
         int shadowPlayerLayer = LayerMask.NameToLayer("Shadow");
         int shadowWorldLayer = LayerMask.NameToLayer("ShadowWorld");
 
-        if (currentMode == GameState.Real)
+        if (currentMode == WorldState.Real)
         {
             playerMove.enabled = true;
             shadowMove.enabled = false;
@@ -142,7 +201,7 @@ public class gameController : MonoBehaviour
             Physics2D.IgnoreLayerCollision(shadowPlayerLayer, shadowWorldLayer, true);
            
         }
-        else if (currentMode == GameState.Shadow)
+        else if (currentMode == WorldState.Shadow)
         {
             playerMove.enabled = false;
             shadowMove.enabled = true;
@@ -235,7 +294,7 @@ public class gameController : MonoBehaviour
             var sc = FindAnyObjectByType<ShadowController>();
             sc.ArmFollowCooldown(4);
             sc.needInitialAlign = true;
-            currentMode = GameState.Real;
+            currentMode = WorldState.Real;
             SetControlForMode();
             pendingReappear = false;
         }
