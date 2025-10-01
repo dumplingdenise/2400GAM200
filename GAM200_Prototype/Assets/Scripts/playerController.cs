@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -72,18 +72,40 @@ public class playerController : MonoBehaviour
 
         var s = transform.localScale;
 
-      /*  if (moveInput > 0)
+        if (moveInput > 0)
         {
-            s.x = +1f;
+            /*s.x = +1f;*/
+            s.x = Mathf.Abs(s.x);
         }
         else if (moveInput < 0)
         {
-            s.x = -1f;
+            /*s.x = -1f;*/
+            s.x = -Mathf.Abs(s.x);
         }
         else
         {
-          
-        } */
+
+        }
+        // walking animation when jump
+        /*if (moveInput != 0)
+        {
+            animator.SetBool("isWalking", true);
+        }
+        else
+        {
+            animator.SetBool("isWalking", false);
+        }*/
+        // no walking animation when jump
+        if (!isGrounded)
+        {
+            // In the air → always idle for now
+            animator.SetBool("isWalking", false);
+        }
+        else
+        {
+            // On the ground → walk only if moving
+            animator.SetBool("isWalking", moveInput != 0);
+        }
 
         transform.localScale = s;
 
