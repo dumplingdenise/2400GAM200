@@ -16,8 +16,11 @@ public class LightController : MonoBehaviour
 
     private bool isDragging = false;
 
-
     private ShadowSource[] shadowSources;
+
+    public AudioSource audioSource;
+    public AudioClip clickSound;
+    public AudioClip lightDragSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -73,6 +76,7 @@ public class LightController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0)) // start dragging
         {
+            PlayDragSound();
             isDragging = true;
             SetLightActive(false); // turn OFF light while dragging
         }
@@ -94,6 +98,7 @@ public class LightController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
+            PlayClickSound();
             currentRotation += rotationStep;
             if (currentRotation >= 360f) currentRotation -= 360f;
 
@@ -140,5 +145,20 @@ public class LightController : MonoBehaviour
     {
         if (light != null) light.enabled = state;
         if (collider != null) collider.enabled = state;
+    }
+
+    private void PlayClickSound()
+    {
+        if (audioSource != null && clickSound != null)
+        {
+            audioSource.PlayOneShot(clickSound);
+        }
+    }
+    private void PlayDragSound()
+    {
+        if (audioSource != null && lightDragSound != null)
+        {
+            audioSource.PlayOneShot(lightDragSound);
+        }
     }
 }
