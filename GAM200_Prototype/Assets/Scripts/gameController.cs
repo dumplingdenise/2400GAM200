@@ -33,6 +33,8 @@ public class gameController : MonoBehaviour
     public static gameController Instance;
     public GameObject PausedPanel;
 
+    public GameObject CheckpointPanel;
+
     [SerializeField] private GameObject mainDoll, shadowDoll;
     public WorldState currentMode;
 
@@ -139,6 +141,12 @@ public class gameController : MonoBehaviour
     public void mainMenu()
     {
         SceneManager.LoadScene("Menu");
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+        Debug.Log("Game Closed");
     }
 
     void ShadowSwitchMode()
@@ -311,6 +319,12 @@ public class gameController : MonoBehaviour
         //rmb the most recent checkpoint
         currentCheckpoint = cp;
         Debug.Log("Checkpoint set:" + cp.name);
+
+        if (cp.name == "CheckPoint_3")
+        {
+            currentGameState = GameState.Paused;
+            CheckpointPanel.SetActive(true);
+        }
 
     }
 
