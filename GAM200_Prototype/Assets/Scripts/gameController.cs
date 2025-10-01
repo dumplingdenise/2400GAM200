@@ -320,7 +320,7 @@ public class gameController : MonoBehaviour
         currentCheckpoint = cp;
         Debug.Log("Checkpoint set:" + cp.name);
 
-        if (cp.name == "CheckPoint_2")
+        if (cp.name == "CheckPoint_3")
         {
             currentGameState = GameState.Paused;
             CheckpointPanel.SetActive(true);
