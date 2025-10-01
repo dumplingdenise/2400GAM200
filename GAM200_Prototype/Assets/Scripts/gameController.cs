@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class gameController : MonoBehaviour
 {
@@ -34,6 +35,10 @@ public class gameController : MonoBehaviour
     public GameObject PausedPanel;
 
     public GameObject CheckpointPanel;
+
+    // button sfx
+    public AudioSource audioSource;
+    public AudioClip btnClickSound;
 
     [SerializeField] private GameObject mainDoll, shadowDoll;
     public WorldState currentMode;
@@ -131,6 +136,7 @@ public class gameController : MonoBehaviour
 
     public void ResumeGame()
     {
+        PlayClickSound();
         currentGameState = GameState.Playing;
         if (PausedPanel != null)
         {
@@ -140,11 +146,18 @@ public class gameController : MonoBehaviour
 
     public void mainMenu()
     {
-        SceneManager.LoadScene("Menu");
+        PlayClickSound();
+        StartCoroutine(LoadSceneWithDelay("Menu", 0.3f)); // 0.3s delay
+    }
+    private IEnumerator LoadSceneWithDelay(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
     }
 
     public void ExitGame()
     {
+        PlayClickSound();
         Application.Quit();
         Debug.Log("Game Closed");
     }
@@ -364,5 +377,12 @@ public class gameController : MonoBehaviour
         // resume physics and input
         playerrb.simulated = true;
         playerMove.enabled = true;
+    }
+    private void PlayClickSound()
+    {
+        if (audioSource != null && btnClickSound != null)
+        {
+            audioSource.PlayOneShot(btnClickSound);
+        }
     }
 }
