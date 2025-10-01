@@ -37,8 +37,12 @@ public class playerController : MonoBehaviour
     public float groundCheckDistance = 0.12f;
 
     [SerializeField] AudioSource sfx;
-    [SerializeField] AudioClip jumpClip, landClip, footstep;
-    //[SerializeField] AudioClip[] footstepClips;
+    [SerializeField] AudioClip jumpClip, landClip;
+    [SerializeField] AudioSource footstepSource;
+    private float walkThreshold = 0.05f; // min horizontal speed
+    private float footstepMaxVol = 1f;
+    private float footstepFade = 12f; // how fast to fade per second
+
     
 
     void Start()
@@ -46,6 +50,10 @@ public class playerController : MonoBehaviour
        rb = GetComponent<Rigidbody2D>();
        animator = GetComponent<Animator>();
        boxCollider = GetComponent<BoxCollider2D>();
+
+        footstepSource.loop = true;
+        footstepSource.playOnAwake = false;
+        footstepSource.spatialBlend = 0f;
     }
 
     // Update is called once per frame
@@ -57,6 +65,31 @@ public class playerController : MonoBehaviour
             return;
         }
         PlayerMovement();
+
+        bool walking = isGrounded && Mathf.Abs(rb.linearVelocity.x) > walkThreshold;
+
+        if (footstepSource)  // null-guard
+        {
+            if (walking)
+            {
+                if (!footstepSource.isPlaying)
+                    footstepSource.Play();
+
+                // fade IN toward max
+                footstepSource.volume = Mathf.MoveTowards(
+                    footstepSource.volume, footstepMaxVol, footstepFade * Time.deltaTime);
+            }
+            else
+            {
+                // fade OUT toward zero
+                footstepSource.volume = Mathf.MoveTowards(
+                    footstepSource.volume, 0f, footstepFade * Time.deltaTime);
+
+                // stop once silent
+                if (footstepSource.isPlaying && footstepSource.volume <= 0.001f)
+                    footstepSource.Stop();
+            }
+        }
     }
     
     void PlayerMovement()
@@ -147,21 +180,6 @@ public class playerController : MonoBehaviour
 
         wasGrounded = isGrounded;
  
-    }
-
-    public void Footstep()
-    {
-        //play only if actually on the ground
-       // if (!isGrounded) return;
-
-        //play only if moving abit (prevents idle spam)
-        //if (Mathf.Abs(rb.linearVelocity.x) < 0.05f) return;
-
-        if (sfx && footstep)
-        { 
-            sfx.pitch = Random.Range(0.96f, 1.04f);
-            sfx.PlayOneShot(footstep);
-        }
     }
      
    /* 
