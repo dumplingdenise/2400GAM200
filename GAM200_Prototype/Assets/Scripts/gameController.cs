@@ -313,4 +313,42 @@ public class gameController : MonoBehaviour
         Debug.Log("Checkpoint set:" + cp.name);
 
     }
+
+    public void Respawn()
+    {
+        // freeze control and physics so we can safely teleport
+        playerMove.enabled = false;
+        playerrb.simulated = false;
+        playerrb.linearVelocity = Vector2.zero;
+
+        // compute where to respawn and the camera warp delta
+        Vector2 oldPos = playerrb.position;
+        Vector2 cp = (currentCheckpoint != null ? (Vector2)currentCheckpoint.position : (Vector2)startPoint.position);
+        Vector2 target = cp + respawnOffset;
+        Vector3 delta = (Vector3)target - (Vector3)oldPos;
+
+        // ensure in real mode -> camera follow is correct
+        currentMode = WorldState.Real;
+        SetControlForMode();
+        Debug.Log("Respawn to:" + target);
+
+        // move real body(Transform + Rigidbody).
+        mainDoll.transform.position = target;
+        playerrb.position = target;
+
+        //Prevent a camera whip by informing Cinemachine of the teleport.
+        vcam.OnTargetObjectWarped(mainDoll.transform, delta);
+
+        // Reset the follower so it doesn’t tug the player on the next frame.
+        var sc = FindAnyObjectByType<ShadowController>();
+        if (sc != null)
+        {
+            sc.ArmFollowCooldown(4);
+            sc.needInitialAlign = true;
+        }
+
+        // resume physics and input
+        playerrb.simulated = true;
+        playerMove.enabled = true;
+    }
 }
