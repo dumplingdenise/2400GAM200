@@ -71,6 +71,10 @@ public class gameController : MonoBehaviour
     Transform currentCheckpoint; // last activated checkpoint
     [SerializeField] Vector2 respawnOffset = new Vector2 (0f, 0.5f); // spawn abit above ground
 
+    [SerializeField] AudioSource sfx;
+    [SerializeField] AudioClip switchClip;
+ 
+
     private void Awake()
     {
         Instance = this;
@@ -173,6 +177,12 @@ public class gameController : MonoBehaviour
             {
                 // switch to shadow mode
                 currentMode = WorldState.Shadow;
+                if (sfx && switchClip)
+                {
+                    //sfx
+                    sfx.pitch = Random.Range(0.98f, 1.02f);
+                    sfx.PlayOneShot(switchClip);
+                }
                 Debug.Log("Now controlling: " + currentMode);
 
                 // position shadow at main player's current position
@@ -316,6 +326,12 @@ public class gameController : MonoBehaviour
             sc.ArmFollowCooldown(4);
             sc.needInitialAlign = true;
             currentMode = WorldState.Real;
+            if (sfx && switchClip)
+            {
+                //sfx
+                sfx.pitch = Random.Range(0.98f, 1.02f);
+                sfx.PlayOneShot(switchClip);
+            }
             SetControlForMode();
             pendingReappear = false;
         }
