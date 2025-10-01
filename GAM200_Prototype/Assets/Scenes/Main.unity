@@ -2732,6 +2732,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpspeed: 10
+  Ground:
+    serializedVersion: 2
+    m_Bits: 2560
+  GroundCheckOffset: {x: 0, y: -0.25}
+  groundCheckDistance: 1.5
 --- !u!50 &714298554
 Rigidbody2D:
   serializedVersion: 5
