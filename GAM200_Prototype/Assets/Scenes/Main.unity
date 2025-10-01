@@ -7133,7 +7133,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
@@ -7446,6 +7446,8 @@ MonoBehaviour:
   currentGameState: 0
   PausedPanel: {fileID: 1721443510}
   CheckpointPanel: {fileID: 1645921470}
+  audioSource: {fileID: 1611770037}
+  btnClickSound: {fileID: 8300000, guid: 8de402ba9a4d8bd43b38a6b315189bc9, type: 3}
   mainDoll: {fileID: 714298550}
   shadowDoll: {fileID: 1267856431}
   currentMode: 0
@@ -7479,8 +7481,8 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 8de402ba9a4d8bd43b38a6b315189bc9, type: 3}
+  m_Resource: {fileID: 8300000, guid: 8de402ba9a4d8bd43b38a6b315189bc9, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -7893,7 +7895,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -875.78, y: -539.56}
+  m_AnchoredPosition: {x: -875.02, y: -540.2}
   m_SizeDelta: {x: 7.9243, y: 0.5562}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1670199587

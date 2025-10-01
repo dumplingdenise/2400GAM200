@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class gameController : MonoBehaviour
 {
@@ -34,6 +35,10 @@ public class gameController : MonoBehaviour
     public GameObject PausedPanel;
 
     public GameObject CheckpointPanel;
+
+    // button sfx
+    public AudioSource audioSource;
+    public AudioClip btnClickSound;
 
     [SerializeField] private GameObject mainDoll, shadowDoll;
     public WorldState currentMode;
@@ -131,6 +136,7 @@ public class gameController : MonoBehaviour
 
     public void ResumeGame()
     {
+        PlayClickSound();
         currentGameState = GameState.Playing;
         if (PausedPanel != null)
         {
@@ -140,11 +146,18 @@ public class gameController : MonoBehaviour
 
     public void mainMenu()
     {
-        SceneManager.LoadScene("Menu");
+        PlayClickSound();
+        StartCoroutine(LoadSceneWithDelay("Menu", 0.3f)); // 0.3s delay
+    }
+    private IEnumerator LoadSceneWithDelay(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
     }
 
     public void ExitGame()
     {
+        PlayClickSound();
         Application.Quit();
         Debug.Log("Game Closed");
     }
@@ -330,28 +343,94 @@ public class gameController : MonoBehaviour
 
     public void Respawn()
     {
-        // freeze control and physics so we can safely teleport
-        playerMove.enabled = false;
-        playerrb.simulated = false;
-        playerrb.linearVelocity = Vector2.zero;
+        /*        // freeze control and physics so we can safely teleport
+                playerMove.enabled = false;
+                playerrb.simulated = false;
+                playerrb.linearVelocity = Vector2.zero;
+
+                // compute where to respawn and the camera warp delta
+                Vector2 oldPos = playerrb.position;
+                Vector2 cp = (currentCheckpoint != null ? (Vector2)currentCheckpoint.position : (Vector2)startPoint.position);
+                Vector2 target = cp + respawnOffset;
+                Vector3 delta = (Vector3)target - (Vector3)oldPos;
+
+                // ensure in real mode -> camera follow is correct
+                currentMode = WorldState.Real;
+                SetControlForMode();
+                Debug.Log("Respawn to:" + target);
+
+                // move real body(Transform + Rigidbody).
+                mainDoll.transform.position = target;
+                playerrb.position = target;
+
+                //Prevent a camera whip by informing Cinemachine of the teleport.
+                vcam.OnTargetObjectWarped(mainDoll.transform, delta);
+
+                // Reset the follower so it doesn’t tug the player on the next frame.
+                var sc = FindAnyObjectByType<ShadowController>();
+                if (sc != null)
+                {
+                    sc.ArmFollowCooldown(4);
+                    sc.needInitialAlign = true;
+                }
+
+                // resume physics and input
+                playerrb.simulated = true;
+                playerMove.enabled = true;*/
 
         // compute where to respawn and the camera warp delta
-        Vector2 oldPos = playerrb.position;
         Vector2 cp = (currentCheckpoint != null ? (Vector2)currentCheckpoint.position : (Vector2)startPoint.position);
         Vector2 target = cp + respawnOffset;
-        Vector3 delta = (Vector3)target - (Vector3)oldPos;
 
-        // ensure in real mode -> camera follow is correct
-        currentMode = WorldState.Real;
-        SetControlForMode();
-        Debug.Log("Respawn to:" + target);
+        if (currentMode == WorldState.Real)
+        {
+            // freeze control and physics so we can safely teleport
+            playerMove.enabled = false;
+            playerrb.simulated = false;
+            playerrb.linearVelocity = Vector2.zero;
 
-        // move real body(Transform + Rigidbody).
-        mainDoll.transform.position = target;
-        playerrb.position = target;
+            Vector2 oldPos = playerrb.position;
+            Vector3 delta = (Vector3)target - (Vector3)oldPos;
 
-        //Prevent a camera whip by informing Cinemachine of the teleport.
-        vcam.OnTargetObjectWarped(mainDoll.transform, delta);
+            // ensure in real mode -> camera follow is correct
+            currentMode = WorldState.Real;
+            SetControlForMode();
+            Debug.Log("Respawn to:" + target);
+
+            // move real body(Transform + Rigidbody).
+            mainDoll.transform.position = target;
+            playerrb.position = target;
+
+            //Prevent a camera whip by informing Cinemachine of the teleport.
+            vcam.OnTargetObjectWarped(mainDoll.transform, delta);
+
+            // resume physics and input
+            playerrb.simulated = true;
+            playerMove.enabled = true;
+        }
+        else if (currentMode == WorldState.Shadow) 
+        { 
+            shadowMove.enabled = false;
+            shadowRb.simulated = false;
+            shadowRb.linearVelocity = Vector2.zero;
+
+            Vector2 oldPos = shadowRb.position;
+            Vector3 delta = (Vector3)target - (Vector3)oldPos;
+
+            // move shadow and real body(Transform + Rigidbody).
+            shadowDoll.transform.position = target;
+            shadowRb.position = target;
+
+            mainDoll.transform.position = target;
+            playerrb.position = target;
+
+            //Prevent a camera whip by informing Cinemachine of the teleport.
+            vcam.OnTargetObjectWarped(shadowDoll.transform, delta);
+
+            // resume physics and input
+            shadowRb.simulated = true;
+            shadowMove.enabled = true;
+        }
 
         // Reset the follower so it doesn’t tug the player on the next frame.
         var sc = FindAnyObjectByType<ShadowController>();
@@ -360,9 +439,12 @@ public class gameController : MonoBehaviour
             sc.ArmFollowCooldown(4);
             sc.needInitialAlign = true;
         }
-
-        // resume physics and input
-        playerrb.simulated = true;
-        playerMove.enabled = true;
+    }
+    private void PlayClickSound()
+    {
+        if (audioSource != null && btnClickSound != null)
+        {
+            audioSource.PlayOneShot(btnClickSound);
+        }
     }
 }
