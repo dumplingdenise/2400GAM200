@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -7,6 +8,9 @@ public class MenuController : MonoBehaviour
     public GameObject controlsPanel;
     public Button controlsBtn;
     public Button backBtn;
+
+    public AudioSource audioSource;   
+    public AudioClip btnClickSound;      
 
     private void Awake()
     {
@@ -33,22 +37,38 @@ public class MenuController : MonoBehaviour
 
     public void PlayBtn()
     {
-        SceneManager.LoadScene("Main");
+        PlayClickSound();
+        StartCoroutine(LoadSceneWithDelay("Main", 0.3f)); // 0.3s delay
     }
-
+    private IEnumerator LoadSceneWithDelay(string sceneName, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        SceneManager.LoadScene(sceneName);
+    }
     public void ExitBtn()
     {
+        PlayClickSound();
         Application.Quit();
         Debug.Log("Game Closed");
     }
 
     public void openControls()
     {
+        PlayClickSound();
         controlsPanel.SetActive(true);
     }
 
     public void closeControls()
     {
+        PlayClickSound();
         controlsPanel.SetActive(false);
+    }
+
+    private void PlayClickSound()
+    {
+        if (audioSource != null && btnClickSound != null)
+        {
+            audioSource.PlayOneShot(btnClickSound);
+        }
     }
 }
