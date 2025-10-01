@@ -20,7 +20,7 @@ public class LightController : MonoBehaviour
 
     public AudioSource audioSource;
     public AudioClip clickSound;
-    public AudioClip lightDragSound;
+   // public AudioClip lightDragSound;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -76,7 +76,7 @@ public class LightController : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0)) // start dragging
         {
-            PlayDragSound();
+           // PlayDragSound();
             isDragging = true;
             SetLightActive(false); // turn OFF light while dragging
         }
@@ -154,11 +154,11 @@ public class LightController : MonoBehaviour
             audioSource.PlayOneShot(clickSound);
         }
     }
-    private void PlayDragSound()
+   /* private void PlayDragSound()
     {
         if (audioSource != null && lightDragSound != null)
         {
             audioSource.PlayOneShot(lightDragSound);
         }
-    }
+    } */
 }
