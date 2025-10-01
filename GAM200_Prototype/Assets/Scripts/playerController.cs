@@ -25,16 +25,21 @@ public class playerController : MonoBehaviour
     private Rigidbody2D rb;
 
     private bool isGrounded = false; // check for jumping
+    private bool wasGrounded;
 
     //animation
     private Animator animator;
     //private bool isWalking = false;
 
-    /*
+    
     public LayerMask Ground;
     public Vector2 GroundCheckOffset = new Vector2(0f ,- 0.1f);
     public float groundCheckDistance = 0.12f;
-    */
+
+    [SerializeField] AudioSource sfx;
+    [SerializeField] AudioClip jumpClip, landClip, footstep;
+    //[SerializeField] AudioClip[] footstepClips;
+    
 
     void Start()
     {
@@ -68,6 +73,14 @@ public class playerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpspeed);
+
+            if (sfx && jumpClip)
+            {
+                //sfx
+                sfx.pitch = Random.Range(0.98f, 1.02f);
+                sfx.PlayOneShot(jumpClip);
+            }
+      
         }
 
         var s = transform.localScale;
@@ -86,6 +99,7 @@ public class playerController : MonoBehaviour
         {
 
         }
+
         // walking animation when jump
         /*if (moveInput != 0)
         {
@@ -96,6 +110,7 @@ public class playerController : MonoBehaviour
             animator.SetBool("isWalking", false);
         }*/
         // no walking animation when jump
+
         if (!isGrounded)
         {
             // In the air → always idle for now
@@ -112,15 +127,44 @@ public class playerController : MonoBehaviour
        // animator.SetFloat("Speed", Mathf.Abs(moveInput));
     }
 
-    /*
+    
     private void FixedUpdate()
     {
-        Physics2D.Raycast(rb.position, GroundCheckOffset);
-        float distance = groundCheckDistance;
-        //LayerMask = Groundmask;
+        Vector2 origin = rb.position + GroundCheckOffset;
+        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, Ground);
+        isGrounded = (hit.collider != null && hit.normal.y >= 0.7f);
+        Debug.DrawRay(origin, Vector2.down * groundCheckDistance, Color.yellow);
+
+        if (!wasGrounded && isGrounded)
+        {
+            if (sfx && landClip)
+            {
+                sfx.pitch = Random.Range(0.98f, 1.02f);
+                sfx.PlayOneShot(landClip);
+            }
+           
+        }
+
+        wasGrounded = isGrounded;
+ 
     }
-     */
-    
+
+    public void Footstep()
+    {
+        //play only if actually on the ground
+       // if (!isGrounded) return;
+
+        //play only if moving abit (prevents idle spam)
+        //if (Mathf.Abs(rb.linearVelocity.x) < 0.05f) return;
+
+        if (sfx && footstep)
+        { 
+            sfx.pitch = Random.Range(0.96f, 1.04f);
+            sfx.PlayOneShot(footstep);
+        }
+    }
+     
+   /* 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         isGrounded = true;
@@ -132,5 +176,5 @@ public class playerController : MonoBehaviour
         isGrounded = false;
        // animator.SetBool("Grounded", isGrounded);
     }
-    
+    */
 }
