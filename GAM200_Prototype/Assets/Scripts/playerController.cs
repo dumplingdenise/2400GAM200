@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using static gameController;
 
@@ -28,6 +29,12 @@ public class playerController : MonoBehaviour
     //animation
     private Animator animator;
     //private bool isWalking = false;
+
+    /*
+    public LayerMask Ground;
+    public Vector2 GroundCheckOffset = new Vector2(0f ,- 0.1f);
+    public float groundCheckDistance = 0.12f;
+    */
 
     void Start()
     {
@@ -83,6 +90,15 @@ public class playerController : MonoBehaviour
        // animator.SetFloat("Speed", Mathf.Abs(moveInput));
     }
 
+    /*
+    private void FixedUpdate()
+    {
+        Physics2D.Raycast(rb.position, GroundCheckOffset);
+        float distance = groundCheckDistance;
+        //LayerMask = Groundmask;
+    }
+     */
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         isGrounded = true;
@@ -94,5 +110,5 @@ public class playerController : MonoBehaviour
         isGrounded = false;
        // animator.SetBool("Grounded", isGrounded);
     }
-
+    
 }
