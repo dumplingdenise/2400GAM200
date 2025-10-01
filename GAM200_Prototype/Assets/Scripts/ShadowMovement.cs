@@ -66,6 +66,7 @@ public class ShadowMovement : MonoBehaviour
         // face direction (fli[s sprite)
         var s = transform.localScale;
 
+        /*
         if (moveInput > 0)
         {
             s.x = +1f;
@@ -75,6 +76,7 @@ public class ShadowMovement : MonoBehaviour
             s.x = -1f;
         }
         // if 0, keep last facing
+        */
         transform.localScale = s;
 
     }

@@ -65,7 +65,7 @@ public class playerController : MonoBehaviour
 
         var s = transform.localScale;
 
-        if (moveInput > 0)
+      /*  if (moveInput > 0)
         {
             s.x = +1f;
         }
@@ -76,7 +76,7 @@ public class playerController : MonoBehaviour
         else
         {
           
-        }
+        } */
 
         transform.localScale = s;
 
