@@ -352,6 +352,23 @@ public class gameController : MonoBehaviour
         if (cp.name == "CheckPoint_3")
         {
             currentGameState = GameState.Paused;
+
+            // stop movement instantly
+            playerrb.linearVelocity = Vector2.zero;
+            shadowRb.linearVelocity = Vector2.zero;
+            // force animator back to Idle
+            if (mainAnimator != null)
+                mainAnimator.SetBool("isWalking", false);
+
+            // stop footsteps audio
+            if (playerMove != null)
+            {
+                var footstep = playerMove.GetComponent<playerController>();
+                if (footstep != null && footstep.footstepSource != null)
+                {
+                    footstep.footstepSource.Stop();
+                }
+            }
             CheckpointPanel.SetActive(true);
         }
 

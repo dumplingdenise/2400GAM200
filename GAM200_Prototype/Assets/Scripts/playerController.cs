@@ -38,7 +38,7 @@ public class playerController : MonoBehaviour
 
     [SerializeField] AudioSource sfx;
     [SerializeField] AudioClip jumpClip, landClip;
-    [SerializeField] AudioSource footstepSource;
+    [SerializeField] public AudioSource footstepSource;
     private float walkThreshold = 0.05f; // min horizontal speed
     private float footstepMaxVol = 1f;
     private float footstepFade = 12f; // how fast to fade per second
