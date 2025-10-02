@@ -121,6 +121,7 @@ public class gameController : MonoBehaviour
     {
         if (currentGameState == GameState.Playing)
         {
+            StopFootsteps();
             PauseGame();
         }
         else
@@ -177,6 +178,7 @@ public class gameController : MonoBehaviour
             {
                 // switch to shadow mode
                 currentMode = WorldState.Shadow;
+                StopFootsteps();
                 if (sfx && switchClip)
                 {
                     //sfx
@@ -326,6 +328,7 @@ public class gameController : MonoBehaviour
             sc.ArmFollowCooldown(4);
             sc.needInitialAlign = true;
             currentMode = WorldState.Real;
+            StopFootsteps();
             if (sfx && switchClip)
             {
                 //sfx
@@ -478,6 +481,16 @@ public class gameController : MonoBehaviour
         if (audioSource != null && btnClickSound != null)
         {
             audioSource.PlayOneShot(btnClickSound);
+        }
+    }
+
+    void StopFootsteps()
+    {
+        if (playerMove != null && playerMove.footstepSource != null)
+        {
+            var src = playerMove.footstepSource;
+            src.volume = 0f;
+            src.Stop();
         }
     }
 }
