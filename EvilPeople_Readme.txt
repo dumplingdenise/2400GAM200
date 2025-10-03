@@ -13,7 +13,7 @@ Players can split into physical (doll form) and shadow forms:
 - The shadow interacts with shadow platforms
 By manipulating the light source, player reshape shadows into pathways, solve puzzles, and escape the theatre.
 
-Goal: Reach the door at the end of the stage.
+Goal: Finish tutorial and Reach the door at the end of the stage.
 
 2. Controls
 - A and D           : Move
@@ -28,7 +28,7 @@ Goal: Reach the door at the end of the stage.
    * Basic movement (run, jump)
    * Light manipulation to cast shadows
    * Split/Merge mechanic between doll and shadow
-   * Simple puzzle requiring both forms
+   * Simple puzzle requiring players to use the mechanics taught
 - Basic checkpoint / respawn system
 
 4. GAME LEVEL
