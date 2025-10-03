@@ -6,25 +6,43 @@ Team Name : Evil People
 Version : M1 Unity Build
 Date: 2 October 2025
 
-1. How to launch
--Run _ in the build folder
-- Tested on Windows 10, 1080 resolution
+1.DESCRIPTION OF GAMEPLAY
+The Last Act is a 2D puzzle platformer set in eerie, abandon theatre.
+Players can split into physical (doll form) and shadow forms:
+- The physical doll interacts with real objects
+- The shadow interacts with shadow platforms
+By manipulating the light source, player reshape shadows into pathways, solve puzzles, and escape the theatre.
+
+Goal: Reach the door at the end of the stage.
 
 2. Controls
 - A and D           : Move
 - Space             : Jump
 - E                 : Split / Merge with shadow
-- F                 : Manipulate light source (if available)
+- F                 : Rotate Light Source
+- Mouse Left Click  : Move and Drag Light Source
 - Esc               : Pause Menu
 
-3. Features in This Build
-- Checkpoint / respawn system
-- Tutorial Stage
-   * Teaches basic movement (run, jump)
-   * Introduces light manipulation to cast shadows
-   * Demonstrates split/merge mechanic with simple puzzle
+3. Game Features (M1 Prototype)
+- Tutorial stage that introduces all implemented mechanics:
+   * Basic movement (run, jump)
+   * Light manipulation to cast shadows
+   * Split/Merge mechanic between doll and shadow
+   * Simple puzzle requiring both forms
+- Basic checkpoint / respawn system
 
-4. Known Issues/Limitations
+4. GAME LEVEL
+- Includes one tutorial level designed to teach the core mechanics step by step:
+   * Movement and jumping
+   * Casting shadows using light
+   * Switching between doll and shadow to solve a puzzle
+- No additional levels implemented yet.
+
+6. AUDIO (Optional)
+- SFX for footstep, jumping, landing, switching of forms, light rotating were added for the physical doll player.
+- Buttons SFX
+
+7. Known Issues/Limitations
 - Collider for shadow player
 - Shadow platforms remain collidable even when not illuminated.
   (Shadow player can stand on invisible platforms.)
