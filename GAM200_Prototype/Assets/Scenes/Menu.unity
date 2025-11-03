@@ -3476,7 +3476,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.8
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
@@ -4853,6 +4853,7 @@ GameObject:
   - component: {fileID: 1452621175}
   - component: {fileID: 1452621177}
   - component: {fileID: 1452621176}
+  - component: {fileID: 1452621178}
   m_Layer: 5
   m_Name: AudioPanel
   m_TagString: Untagged
@@ -4921,6 +4922,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1452621174}
   m_CullTransparentMesh: 1
+--- !u!114 &1452621178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452621174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7825688b916951f498b7a917f87003e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicSlider: {fileID: 2116582685}
+  sfxSlider: {fileID: 1075753338}
 --- !u!1 &1485504297
 GameObject:
   m_ObjectHideFlags: 0
@@ -6058,7 +6073,7 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0.8
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
