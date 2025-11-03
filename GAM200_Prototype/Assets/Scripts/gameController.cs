@@ -45,7 +45,7 @@ public class gameController : MonoBehaviour
 
     // switching for player movement control
     [SerializeField] playerController playerMove;
-    [SerializeField] ShadowMovement shadowMove;
+    [SerializeField] ShadowPlayerMovement shadowMove;
 
     // rigidbody referennces for physics control
     private Rigidbody2D playerrb;
@@ -324,7 +324,7 @@ public class gameController : MonoBehaviour
         {
             ShowMainAt(pendingPos);
             //FindAnyObjectByType<CameraController>().SnapToTarget();
-            var sc = FindAnyObjectByType<ShadowController>();
+            var sc = FindAnyObjectByType<ShadowPlayerController>();
             sc.ArmFollowCooldown(4);
             sc.needInitialAlign = true;
             currentMode = WorldState.Real;
@@ -469,7 +469,7 @@ public class gameController : MonoBehaviour
         }
 
         // Reset the follower so it doesn’t tug the player on the next frame.
-        var sc = FindAnyObjectByType<ShadowController>();
+        var sc = FindAnyObjectByType<ShadowPlayerController>();
         if (sc != null)
         {
             sc.ArmFollowCooldown(4);

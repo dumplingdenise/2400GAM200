@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShadowMovement : MonoBehaviour
+public class ShadowPlayerMovement : MonoBehaviour
 {
     // CONTROL SHADOW MODE ONLY
 
@@ -23,7 +23,7 @@ public class ShadowMovement : MonoBehaviour
     private Animator animator;
     //private bool isWalking = false;
 
-    private ShadowController shadowController;
+    private ShadowPlayerController shadowController;
     private gameController controller;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

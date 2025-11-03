@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShadowController : MonoBehaviour
+public class ShadowPlayerController : MonoBehaviour
 {
    
 
