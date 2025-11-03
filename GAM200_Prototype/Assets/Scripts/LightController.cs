@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
-using System.Collections.Generic;
 using static gameController;
 
 public class LightController : MonoBehaviour
@@ -21,11 +20,11 @@ public class LightController : MonoBehaviour
     public AudioClip lightAudioClip;
 
     [Header("Shadow Settings")]
-    public float shadowLength = 8f;
+    public float shadowLength = 0f;
     public LayerMask shadowableLayer;
     public GameObject shadowPrefab;
 
-    private List<GeneratedShadow> activeShadows = new List<GeneratedShadow>();
+    private List<ShadowCaster> activeShadows = new List<ShadowCaster>();
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -121,9 +120,15 @@ public class LightController : MonoBehaviour
     // shadow system
     void OnTriggerEnter2D(Collider2D col)
     {
+        if (!lightOn)
+        {
+            return;
+        }
+
+        PolygonCollider2D poly = col as PolygonCollider2D;
         if (((1 << col.gameObject.layer) & shadowableLayer) != 0)
         {
-            var shadow = new GeneratedShadow(col, Instantiate(shadowPrefab), shadowLength);
+            var shadow = new ShadowCaster(poly, Instantiate(shadowPrefab), shadowLength);
             activeShadows.Add(shadow);
         }
     }
@@ -155,67 +160,5 @@ public class LightController : MonoBehaviour
         foreach (var s in activeShadows)
             GameObject.Destroy(s.shadowObj);
         activeShadows.Clear();
-    }
-
-    private class GeneratedShadow
-    {
-        public Collider2D source;
-        public GameObject shadowObj;
-        private PolygonCollider2D shadowCol;
-        private float length;
-
-        public GeneratedShadow(Collider2D src, GameObject obj, float len)
-        {
-            source = src;
-            shadowObj = obj;
-            shadowCol = obj.GetComponent<PolygonCollider2D>();
-            length = len;
-
-            // Keep in world space (not parented)
-            shadowObj.transform.SetParent(null);
-            shadowObj.name = $"Shadow_{src.name}";
-        }
-
-        public void UpdateShape(Vector2 lightPos)
-        {
-            if (source == null || shadowCol == null) return;
-
-            List<Vector2> worldPoints = new List<Vector2>();
-
-            // 🔹 Handle PolygonCollider2D
-            if (source is PolygonCollider2D poly)
-            {
-                Vector2[] pts = poly.GetPath(0);
-                foreach (var p in pts)
-                    worldPoints.Add(poly.transform.TransformPoint(p));
-            }
-            // 🔹 Handle BoxCollider2D
-            else if (source is BoxCollider2D box)
-            {
-                Vector2 center = box.offset;
-                Vector2 half = box.size * 0.5f;
-                worldPoints.Add(box.transform.TransformPoint(center + new Vector2(-half.x, -half.y)));
-                worldPoints.Add(box.transform.TransformPoint(center + new Vector2(half.x, -half.y)));
-                worldPoints.Add(box.transform.TransformPoint(center + new Vector2(half.x, half.y)));
-                worldPoints.Add(box.transform.TransformPoint(center + new Vector2(-half.x, half.y)));
-            }
-            else
-            {
-                // You can skip unsupported colliders like Circle2D or Edge2D
-                return;
-            }
-
-            // 🔹 Project shadow points
-            Vector2[] shadowPts = new Vector2[worldPoints.Count];
-            for (int i = 0; i < worldPoints.Count; i++)
-            {
-                Vector2 dir = (worldPoints[i] - lightPos).normalized;
-                shadowPts[i] = worldPoints[i] + dir * length;
-            }
-
-            shadowCol.pathCount = 1;
-            shadowCol.SetPath(0, shadowPts);
-            shadowObj.transform.position = Vector3.zero;
-        }
     }
 }
