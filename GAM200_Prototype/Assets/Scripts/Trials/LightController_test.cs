@@ -2,24 +2,31 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using static gameController;
 
-public class LightController : MonoBehaviour
+public class LightController_Test : MonoBehaviour
 {
     [Header("Rotation Settings")]
-    public float rotationStep = 90f; // how much to rotate each press
-    private float currentRotation = 0f;
+    /*public float rotationStep = 90f; // how much to rotate each press
+    private float currentRotation = 0f;*/
+    public bool lightOn = true;
+    public float followSpeed = 10f;
+    public float moveSpeed = 10f;
+
 
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private Light2D light;
     private PolygonCollider2D collider;
 
-    private bool isDragging = false;
+    private Vector2 currentDirection; // new
+
+    /*private bool isDragging = false;*/
 
     private ShadowSource[] shadowSources;
 
     public AudioSource audioSource;
     public AudioClip clickSound;
-   // public AudioClip lightDragSound;
+    // public AudioClip lightDragSound;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -52,7 +59,7 @@ public class LightController : MonoBehaviour
         }
 
         // start ON
-        SetLightActive(true);
+        /*SetLightActive(true);*/
 
     }
 
@@ -64,14 +71,21 @@ public class LightController : MonoBehaviour
         {
             return;
         }
-        else
+        /*else
         {
             HandleLightMovement();
             HandleRotationInput();
+        }*/
+        HandleLightToggle();
+        MoveToCursor();
+
+        if (lightOn)
+        {
+            UpdateLightDirection();
         }
     }
 
-    void HandleLightMovement()
+/*    void HandleLightMovement()
     {
         if (Input.GetMouseButtonDown(0)) // start dragging
         {
@@ -104,6 +118,37 @@ public class LightController : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 0, currentRotation);
 
         }
+    }*/
+
+    void HandleLightToggle()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            lightOn = !lightOn;
+            PlayClickSound();
+            SetLightActive(lightOn);
+        }
+    }
+    void MoveToCursor()
+    {
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0f;
+
+        Vector2 newPos = Vector2.Lerp(transform.position, mouseWorld, Time.deltaTime * moveSpeed);
+        rb.MovePosition(newPos);
+    }
+
+    void UpdateLightDirection()
+    {
+        Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0;
+
+        Vector2 direction = (mouseWorld - transform.position).normalized;
+
+        // Rotate smoothly toward mouse
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion targetRot = Quaternion.Euler(0, 0, angle);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRot, Time.deltaTime * followSpeed);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -120,11 +165,13 @@ public class LightController : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
+        if (!lightOn) return;
         if (collision.CompareTag("Platforms"))
         {
             ShadowSource src = collision.GetComponent<ShadowSource>();
             if (src != null)
-                src.ShowShadow(transform.up); // keep updating shadow direction
+                /*src.ShowShadow(transform.up); // keep updating shadow direction*/
+                src.ShowShadow(currentDirection);
         }
     }
 
