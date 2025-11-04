@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
-using static gameController;
+using static GameController;
 
 public class LightController : MonoBehaviour
 {
