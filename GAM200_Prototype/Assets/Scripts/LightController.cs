@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Rendering.Universal;
 using System.Collections.Generic;
-using static gameController;
+using static GameController;
 
 public class LightController : MonoBehaviour
 {
@@ -56,6 +56,8 @@ public class LightController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameController.IsPaused) return;
+
         HandleLightToggle();
         HandleLightMovement();
         HandleLightDirection();

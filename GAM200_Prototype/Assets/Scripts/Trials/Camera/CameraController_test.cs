@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController_test : MonoBehaviour
 {
     [SerializeField] Transform mainDoll;
     [SerializeField] Transform shadowDoll;

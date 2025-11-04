@@ -22,8 +22,8 @@ TagManager:
   - ShadowWorld
   - Light
   - MapBoundary
-  - ShadowableLayer
-  - ObjShadow
+  - 
+  - 
   - Enemy
   - 
   - 

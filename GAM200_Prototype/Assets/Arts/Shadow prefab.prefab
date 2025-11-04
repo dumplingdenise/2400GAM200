@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 9222005740989739576}
   - component: {fileID: 5802401180587977280}
   - component: {fileID: 6979507887601866426}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Shadow prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
