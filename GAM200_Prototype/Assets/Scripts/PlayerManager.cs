@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Unity.Cinemachine;
+using static GameController;
 
 public enum EntityLinkState { Joined, Split }
 public enum EntityControlState { Physical, Shadow }
@@ -25,6 +26,8 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
+        if (GameController.IsPaused) return;
+
         HandleInputs();
     }
 

@@ -46,6 +46,10 @@ public class GameController : MonoBehaviour
     private Color activeColor;
     private Color inactiveColor;
 
+    public static bool IsPaused
+    {
+        get { return Instance != null && Instance.currentGameState == GameState.Paused; }
+    }
 
     void Awake()
     {
@@ -57,6 +61,9 @@ public class GameController : MonoBehaviour
 
         ColorUtility.TryParseHtmlString("#323232", out activeColor);
         ColorUtility.TryParseHtmlString("#FFFFFF", out inactiveColor);
+
+        settingsPanel.SetActive(false);
+        ShowControlsTab();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

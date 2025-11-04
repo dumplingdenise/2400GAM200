@@ -1,4 +1,5 @@
 using UnityEngine;
+using static GameController;
 
 public class ShadowFollower : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class ShadowFollower : MonoBehaviour
 
     void Update()
     {
+        if (GameController.IsPaused) return;
+
         if (target == null) return;
 
         transform.position = Vector3.Lerp(

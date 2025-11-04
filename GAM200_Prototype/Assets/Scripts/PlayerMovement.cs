@@ -1,4 +1,5 @@
 using UnityEngine;
+using static GameController;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
@@ -25,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (GameController.IsPaused) return;
         if (!canControl) return;
 
         CheckGround();
