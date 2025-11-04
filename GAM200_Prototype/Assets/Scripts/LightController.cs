@@ -126,9 +126,20 @@ public class LightController : MonoBehaviour
         }
 
         PolygonCollider2D poly = col as PolygonCollider2D;
-        if (((1 << col.gameObject.layer) & shadowableLayer) != 0)
+        /*if (((1 << col.gameObject.layer) & shadowableLayer) != 0)
         {
             var shadow = new ShadowCaster(poly, Instantiate(shadowPrefab), shadowLength);
+            activeShadows.Add(shadow);
+        }*/
+
+        // test
+        if (poly != null && ((1 << col.gameObject.layer) & shadowableLayer) != 0)
+        {
+            var shadow = new ShadowCaster(poly, Instantiate(shadowPrefab), shadowLength);
+
+            // ✅ NEW LINE: assign the light’s cone collider to this shadow
+            shadow.lightCollider = collider;
+
             activeShadows.Add(shadow);
         }
     }
