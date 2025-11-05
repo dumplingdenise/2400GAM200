@@ -43,6 +43,10 @@ public class GameController : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip btnClickSound;
 
+    [Header("Audio Sliders")]
+    public Slider musicSlider;
+    public Slider sfxSlider;
+
     private Color activeColor;
     private Color inactiveColor;
 
@@ -70,6 +74,16 @@ public class GameController : MonoBehaviour
     void Start()
     {
         currentGameState = GameState.Playing;
+
+        // Sync sliders with current saved volume values
+        if (AudioManager.instance != null)
+        {
+            float musicVol = PlayerPrefs.GetFloat("MusicVol", 0.8f);
+            float sfxVol = PlayerPrefs.GetFloat("SFXVol", 0.8f);
+
+            musicSlider.value = musicVol;
+            sfxSlider.value = sfxVol;
+        }
     }
 
     // Update is called once per frame
@@ -168,5 +182,17 @@ public class GameController : MonoBehaviour
     {
         if (audioSource && btnClickSound)
             audioSource.PlayOneShot(btnClickSound);
+    }
+
+    public void OnMusicSliderChanged(float value)
+    {
+        if (AudioManager.instance != null)
+            AudioManager.instance.SetMusicVolume(value);
+    }
+
+    public void OnSFXSliderChanged(float value)
+    {
+        if (AudioManager.instance != null)
+            AudioManager.instance.SetSFXVolume(value);
     }
 }
