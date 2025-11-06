@@ -1566,6 +1566,8 @@ MonoBehaviour:
   audioPage: {fileID: 1295369327}
   audioSource: {fileID: 328603516}
   btnClickSound: {fileID: 8300000, guid: 8de402ba9a4d8bd43b38a6b315189bc9, type: 3}
+  musicSlider: {fileID: 1136744224}
+  sfxSlider: {fileID: 1837296747}
 --- !u!82 &328603516
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4216,10 +4218,10 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: SetMusicVolume
-        m_Mode: 0
+      - m_Target: {fileID: 328603515}
+        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
+        m_MethodName: OnMusicSliderChanged
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6698,10 +6700,10 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
-        m_MethodName: SetSFXVolume
-        m_Mode: 0
+      - m_Target: {fileID: 328603515}
+        m_TargetAssemblyTypeName: GameController, Assembly-CSharp
+        m_MethodName: OnSFXSliderChanged
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
