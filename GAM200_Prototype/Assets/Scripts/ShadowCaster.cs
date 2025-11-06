@@ -86,6 +86,15 @@ public class ShadowCaster
             Debug.DrawLine(silhouetteVerts[i], projected[i], Color.yellow, 0.05f);
         }
 
+        // test
+        // 🧩 Offset the base silhouette slightly away from the light to avoid overlap
+        for (int i = 0; i < silhouetteVerts.Count; i++)
+        {
+            Vector2 dir = (silhouetteVerts[i] - lightPos).normalized;
+            silhouetteVerts[i] += dir * 0.03f;  // adjust offset (0.02–0.05)
+        }
+
+
         // 6️⃣ Combine into one closed polygon: original + reversed projected
         List<Vector2> combined = new List<Vector2>();
         combined.AddRange(silhouetteVerts);

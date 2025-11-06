@@ -33,10 +33,12 @@ public class PlayerManager : MonoBehaviour
 
     void HandleInputs()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        /*if (Input.GetKeyDown(KeyCode.E))*/
+        if (InputLockManager.instance.canSplit && Input.GetKeyDown(KeyCode.E))
             ToggleLinkState();
 
-        if (Input.GetKeyDown(KeyCode.Q) && linkState == EntityLinkState.Split)
+        /*if (Input.GetKeyDown(KeyCode.Q) && linkState == EntityLinkState.Split)*/
+        if (InputLockManager.instance.canMerge && linkState == EntityLinkState.Split && Input.GetKeyDown(KeyCode.Q))
             SwitchControl();
     }
 
@@ -47,7 +49,7 @@ public class PlayerManager : MonoBehaviour
             // --- Split ---
             linkState = EntityLinkState.Split;
             shadow.gameObject.SetActive(true);
-            shadow.transform.position = physical.transform.position + Vector3.right * 1.5f;
+            /*shadow.transform.position = physical.transform.position + Vector3.right * 1.5f;*/
         }
         else
         {
@@ -88,7 +90,12 @@ public class PlayerManager : MonoBehaviour
             // disable shadow follow
             ShadowFollower follower = shadow.GetComponent<ShadowFollower>();
             if (follower != null)
+            {
                 follower.target = null;
+                // Disable the follower script while shadow is directly controlled
+                follower.enabled = false;
+                follower.StopAnimation();
+            }                
         }
         else // Joined
         {
@@ -105,7 +112,10 @@ public class PlayerManager : MonoBehaviour
                 // shadow follows physical
                 ShadowFollower follower = shadow.GetComponent<ShadowFollower>();
                 if (follower != null)
+                {
+                    follower.enabled = true;
                     follower.target = physical.transform;
+                }                 
             }
         }
 
@@ -132,5 +142,23 @@ public class PlayerManager : MonoBehaviour
         // Shadow player → only collide with shadow world
         Physics2D.IgnoreLayerCollision(shadowWorldLayer, realLayer, controllingPhysical);
         Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldLayer, controllingPhysical);
+
+        /*int realWorldLayer = LayerMask.NameToLayer("RealWorld");
+        int realLayer = LayerMask.NameToLayer("Real");
+        int shadowWorldLayer = LayerMask.NameToLayer("ShadowWorld");
+        int realWorldDoorLayer = LayerMask.NameToLayer("RealWorldDoor"); // 👈 add this
+
+        bool controllingPhysical = controlState == EntityControlState.Physical;
+
+        // Physical player → only collide with real world
+        Physics2D.IgnoreLayerCollision(realWorldLayer, realLayer, !controllingPhysical);
+        Physics2D.IgnoreLayerCollision(realWorldLayer, shadowWorldLayer, true);
+
+        // Shadow player → only collide with shadow world
+        Physics2D.IgnoreLayerCollision(shadowWorldLayer, realLayer, controllingPhysical);
+        Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldLayer, controllingPhysical);
+
+        // 👇 ADD THIS: allow shadow ↔ real-world-door collision always
+        Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldDoorLayer, false);*/
     }
 }

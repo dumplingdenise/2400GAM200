@@ -53,7 +53,8 @@ public class LightController : MonoBehaviour
     void Update()
     {
         if (GameController.IsPaused) return;
-
+        if (!InputLockManager.instance.canControlLight)
+            return;
         HandleLightToggle();
         HandleFreezeToggle();
         HandleRotationScroll();
@@ -182,6 +183,8 @@ public class LightController : MonoBehaviour
 
             s.SetLength(dynamicLength);
             s.UpdateShape(lightPos);
+
+            
         }
     }
 
@@ -197,8 +200,26 @@ public class LightController : MonoBehaviour
         foreach (var s in activeShadows)
         {
             var col = s.shadowObj.GetComponent<PolygonCollider2D>();
-            if (col != null)
-                col.isTrigger = ghost;
+            if (col == null) continue;
+
+            bool isTriggerState = ghost;
+            string shadowTag = "Untagged";
+
+            // If the source is a WalkThrough platform → make its shadow climbable
+            if (s.source.CompareTag("WalkThrough"))
+            {
+                isTriggerState = true;
+                shadowTag = "Climbable";
+            }
+            // If the source is a WalkThroughDoor → make its shadow pass-through (not climbable)
+            else if (s.source.CompareTag("WalkThroughDoor"))
+            {
+                isTriggerState = true;
+                /*shadowTag = "ShadowGhost";*/
+            }
+
+            col.isTrigger = isTriggerState;
+            s.shadowObj.tag = shadowTag;
         }
     }
 }
