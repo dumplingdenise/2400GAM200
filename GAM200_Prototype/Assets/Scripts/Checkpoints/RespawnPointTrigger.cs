@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class CheckpointTrigger : MonoBehaviour
 {
-    private gameController gc;
+    private GameController gc;
     private bool claimed;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         //cache the central controller once
-        gc = FindAnyObjectByType<gameController>();
+        gc = FindAnyObjectByType<GameController>();
     }
 
     // Update is called once per frame

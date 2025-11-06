@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
 
     public static GameController Instance;
     public GameState currentGameState;
+    public FadeManager fadeManager;  // Reference to the FadeManager
 
     [Header("Paused")]
     public GameObject PausedPanel;
@@ -55,6 +56,20 @@ public class GameController : MonoBehaviour
         get { return Instance != null && Instance.currentGameState == GameState.Paused; }
     }
 
+    // ------------------------------
+    //  Gameplay Respawn Checkpoints & Respawn logic
+    // ------------------------------
+    [Header("Gameplay References")]
+    [SerializeField] private PlayerManager playerManager;  // PlayerManager that manages both entities
+    [SerializeField] private Transform startPoint;          // Level start
+    private Transform currentCheckpoint;                    // Active checkpoint
+    [SerializeField] private Vector2 respawnOffset = new Vector2(0f, 0.5f);
+
+    // Chapter Checkpoint & Autosave
+    [SerializeField] private Transform currentChapterCheckpoint;
+    [SerializeField] private int currentChapterIndex = 0;
+    [SerializeField] private string currentChapterName = "Tutorial";
+
     void Awake()
     {
         // singleton pattern for global access
@@ -83,6 +98,12 @@ public class GameController : MonoBehaviour
 
             musicSlider.value = musicVol;
             sfxSlider.value = sfxVol;
+        }
+
+        // --- Gameplay initialization ---
+        if (playerManager != null)
+        {
+            currentCheckpoint = (startPoint != null) ? startPoint : playerManager.physical.transform;
         }
     }
 
@@ -194,5 +215,76 @@ public class GameController : MonoBehaviour
     {
         if (AudioManager.instance != null)
             AudioManager.instance.SetSFXVolume(value);
+    }
+
+    // ------------------------------
+    //  Checkpoint & Respawn Methods
+    // ------------------------------
+    public void SetCheckpoint(Transform cp)
+    {
+        if (cp == null) return;
+
+        currentCheckpoint = cp;
+        Debug.Log("Checkpoint set: " + cp.name);
+    }
+    public void SetChapterCheckpoint(Transform cp, int index, string name)
+    {
+        if (cp == null) return;
+
+        currentChapterCheckpoint = cp;
+        currentChapterIndex = index;
+        currentChapterName = name;
+
+        Debug.Log($"Chapter checkpoint set: {name} (Index {index}) at {cp.position}");
+    }
+
+    public void Respawn()
+    {
+        if (playerManager == null) return;
+
+        // Start fading out to black
+        fadeManager.FadeOut();
+
+        // Wait for the fade to complete, then respawn the player
+        StartCoroutine(RespawnAfterFade());
+    }
+    private IEnumerator RespawnAfterFade()
+    {
+        yield return new WaitForSeconds(fadeManager.fadeSpeed);
+
+        // compute respawn position
+        Vector2 spawnPos = (currentCheckpoint != null ? (Vector2)currentCheckpoint.position : (Vector2)startPoint.position) + respawnOffset;
+
+        // move both entities back
+        playerManager.physical.transform.position = spawnPos;
+        // Determine the shadow offset based on the direction the player is facing
+        float shadowOffsetX = playerManager.physical.transform.localScale.x > 0 ? -1f : 1f; // Negative for right-facing, positive for left-facing
+
+        // Place the shadow behind the physical player by applying the offset
+        playerManager.shadow.transform.position = new Vector2(spawnPos.x + shadowOffsetX, spawnPos.y);
+
+        // reset physics
+        Rigidbody2D rbPhys = playerManager.physical.GetComponent<Rigidbody2D>();
+        Rigidbody2D rbShadow = playerManager.shadow.GetComponent<Rigidbody2D>();
+        if (rbPhys) rbPhys.linearVelocity = Vector2.zero;
+        if (rbShadow) rbShadow.linearVelocity = Vector2.zero;
+
+        /*ShadowFollower shadowFollower = playerManager.shadow.GetComponent<ShadowFollower>();
+        if (shadowFollower != null)
+        {
+            shadowFollower.StopAnimation();  // Ensure animation stops
+            shadowFollower.target = null;  // Stop shadow from following any target
+            shadowFollower.enabled = false;  // Disable follower temporarily until needed
+        }*/
+
+        // restore control to physical form
+        playerManager.controlState = EntityControlState.Physical;
+        playerManager.linkState = EntityLinkState.Joined;
+        playerManager.UpdateControlContext();
+
+        Debug.Log($"Respawned player(s) to {spawnPos}");
+
+        // Fade back in
+        fadeManager.FadeIn();  // Fade the screen back in
     }
 }

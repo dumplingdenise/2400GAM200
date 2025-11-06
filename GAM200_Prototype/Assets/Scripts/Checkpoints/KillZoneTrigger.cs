@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class KillZoneTrigger : MonoBehaviour
 {
-    private gameController gc;
+    private GameController gc;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         //cache controller
-        gc = FindAnyObjectByType<gameController>();
+        gc = FindAnyObjectByType<GameController>();
     }
 
     // Update is called once per frame
