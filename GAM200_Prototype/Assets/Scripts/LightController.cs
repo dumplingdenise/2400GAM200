@@ -63,7 +63,7 @@ public class LightController : MonoBehaviour
         {
             UpdateAllShadows();
 
-            SetShadowsGhostMode(true);
+            SetShadowsGhostMode(!isFrozen);
         }  
     }
 
