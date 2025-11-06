@@ -11,6 +11,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip menuBGM;
     [SerializeField] AudioClip mainBGM;
 
+    [SerializeField] AudioSource ambienceSource;    // second AudioSource for background SFX
+    [SerializeField] AudioClip ambienceClip;        // e.g. wind, machinery, crowd noise
+
     // Singleton instance so there is only one AudioManager in the game
     public static AudioManager instance;
 
@@ -126,11 +129,33 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
+    public void PlayAmbienceForScene(string sceneName)
+    {
+        if (ambienceSource == null) return;
+
+        // stop ambience for menus
+        if (sceneName == "Menu")
+        {
+            ambienceSource.Stop();
+            return;
+        }
+
+        // play ambience for gameplay scenes only
+        if (sceneName == "Main" && ambienceClip != null)
+        {
+            ambienceSource.clip = ambienceClip;
+            ambienceSource.loop = true;
+            ambienceSource.outputAudioMixerGroup = mixer.FindMatchingGroups("SFX")[0];
+            ambienceSource.Play();
+        }
+    }
+
     // Called automatically whenever a new scene finishes loading.
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Change BGM depending on the scene’s name.
         PlayBGMForScene(scene.name);
+        PlayAmbienceForScene(scene.name);
     }
 
     private void OnDestroy()

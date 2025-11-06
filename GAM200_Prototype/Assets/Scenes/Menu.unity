@@ -3772,6 +3772,8 @@ MonoBehaviour:
   musicSource: {fileID: 1346405459}
   menuBGM: {fileID: 8300000, guid: 1a7f78063681bbf45816faca532dbc09, type: 3}
   mainBGM: {fileID: 8300000, guid: b75d80f185da91e43a90894d0ebde0ed, type: 3}
+  ambienceSource: {fileID: 1346405459}
+  ambienceClip: {fileID: 0}
 --- !u!82 &1346405461
 AudioSource:
   m_ObjectHideFlags: 0
