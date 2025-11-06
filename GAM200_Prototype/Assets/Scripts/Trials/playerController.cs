@@ -133,15 +133,7 @@ public class playerController : MonoBehaviour
 
         }
 
-        // walking animation when jump
-        /*if (moveInput != 0)
-        {
-            animator.SetBool("isWalking", true);
-        }
-        else
-        {
-            animator.SetBool("isWalking", false);
-        }*/
+
         // no walking animation when jump
 
         if (!isGrounded)

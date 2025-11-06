@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using static GameController;
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -9,6 +9,8 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 8f;
     public float crouchMultiplier = 0.5f;
 
+    private Animator animator;
+
     [Header("Ground Check")]
     public Transform groundCheck;
     public float groundRadius = 0.2f;
@@ -18,6 +20,11 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private bool isCrouching;
     private bool canControl = true;
+
+    /*[Header("SFX")]
+    [SerializeField] AudioSource sfx;
+    [SerializeField] AudioClip jumpClip, landClip;
+    [SerializeField] public AudioSource footstepSource;*/
 
     void Awake()
     {
@@ -33,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
         HandleMovement();
         HandleJump();
         HandleCrouch();
+
     }
 
     void CheckGround()
@@ -43,20 +51,57 @@ public class PlayerMovement : MonoBehaviour
     void HandleMovement()
     {
         float move = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        /*float vertical = Input.GetAxisRaw("Vertical");*/
         float speed = isCrouching ? moveSpeed * crouchMultiplier : moveSpeed;
 
         rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
 
         // optional: ladder/stair movement
-        if (vertical != 0 && IsOnLadder())
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, vertical * moveSpeed);
+        /* if (vertical != 0 && IsOnLadder())
+             rb.linearVelocity = new Vector2(rb.linearVelocity.x, vertical * moveSpeed);*/
+
+        var s = transform.localScale;
+
+        if (move > 0)
+        {
+            s.x = Mathf.Abs(s.x);
+        }
+        else if (move < 0)
+        {
+            s.x = -Mathf.Abs(s.x);
+        }
+        else
+        {
+
+        }
+
+        /*if (!isGrounded)
+        {
+            // In the air → always idle for now
+            animator.SetBool("isWalking", false);
+        }
+        else
+        {
+            // On the ground → walk only if moving
+            animator.SetBool("isWalking", move != 0);
+        }*/
+
+        transform.localScale = s;
     }
 
     void HandleJump()
     {
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+
+            /*if (sfx && jumpClip)
+            {
+                //sfx
+                sfx.pitch = Random.Range(0.98f, 1.02f);
+                sfx.PlayOneShot(jumpClip);
+            }*/
+        }          
     }
 
     void HandleCrouch()
