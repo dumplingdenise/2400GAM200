@@ -995,7 +995,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lightOn: 0
-  followSpeed: 10
+  rotationSpeed: 10000
   moveSpeed: 10
   lightAudioSource: {fileID: 138249513}
   lightAudioClip: {fileID: 8300000, guid: 98b3fa26533e8ba43b3aa4625e8b0926, type: 3}
