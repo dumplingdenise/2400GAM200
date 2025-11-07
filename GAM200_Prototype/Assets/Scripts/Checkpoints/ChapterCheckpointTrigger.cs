@@ -24,7 +24,7 @@ public class ChapterCheckpointTrigger : MonoBehaviour
     [Header("Scene Transition (Optional)")]
     public bool loadNextScene = false;      // Toggle to true if this checkpoint loads a new scene
     public string nextSceneName;            // The name of the scene to load
-    public float loadDelay = 0.5f;
+    public float loadDelay = 2f;
 
     private bool canOpen = false;
 
@@ -107,6 +107,18 @@ public class ChapterCheckpointTrigger : MonoBehaviour
         {
             gc.SetChapterCheckpoint(transform, chapterIndex, chapterName);
             Debug.Log($"Entered {chapterName} checkpoint!");
+        }
+
+        if (ChapterUIManager.instance != null)
+        {
+            ChapterUIManager.instance.ShowChapter(chapterName);
+        }
+
+        if (chapterName == "Chapter 1")
+        {
+            var collectibleUI = FindAnyObjectByType<CollectibleUI>();
+            if (collectibleUI != null)
+                collectibleUI.ShowUI();
         }
 
         if (loadNextScene && !string.IsNullOrEmpty(nextSceneName))

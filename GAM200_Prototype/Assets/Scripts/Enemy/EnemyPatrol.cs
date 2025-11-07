@@ -12,7 +12,7 @@ public class EnemyPatrol : MonoBehaviour
     private float pauseTimer;
 
     private Rigidbody2D rb;
-    private gameController gc;
+    private GameController gc;
 
     private Transform currentTarget;
 
@@ -20,7 +20,7 @@ public class EnemyPatrol : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        gc = FindAnyObjectByType<gameController>();
+        gc = FindAnyObjectByType<GameController>();
         currentTarget = rightPoint;
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
