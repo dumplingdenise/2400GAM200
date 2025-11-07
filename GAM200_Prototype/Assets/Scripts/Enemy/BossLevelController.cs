@@ -13,7 +13,7 @@ public class BossLevelController : MonoBehaviour
 
     // Player and GC ref
     [SerializeField] Rigidbody2D playerRb;
-    private gameController gc;
+    [SerializeField] GameController gc;
     [SerializeField] PlayerManager playerManager;
 
     // flag/timers
@@ -35,12 +35,18 @@ public class BossLevelController : MonoBehaviour
     bool lockOnStart = true;
     bool showLockHint = true;
 
+   // public FadeManager fadeManager;  // Reference to the FadeManager
+
+    float resumeDelay = 1.2f;
+    float suspendUntil = 0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         playerRb = FindAnyObjectByType<Rigidbody2D>();
 
+        if (gc == null) gc = GameController.Instance;
+        
         //boss.enabled = false;
         PrepareBossLevel();
 
@@ -65,6 +71,15 @@ public class BossLevelController : MonoBehaviour
             return;
         }
 
+        if (!isActive && Time.time >= suspendUntil)
+        {
+            mismatchTimer = 0f;
+            cooldownTimer = 0f;
+            isActive = true;   // resume the pattern check
+        }
+
+        if (Time.time < suspendUntil) return;
+
         bool bossMoving = boss.isMoving;
 
         float spd = Mathf.Abs(playerRb.linearVelocity.x);
@@ -84,9 +99,15 @@ public class BossLevelController : MonoBehaviour
 
         if (mismatchTimer >= mismatchGrace)
         {
-            gc.Respawn();
-            mismatchTimer = 0;
-            cooldownTimer =postRespawnCooldown;
+            //gc.Respawn();
+            isActive = false;
+
+            mismatchTimer = 0f;
+            cooldownTimer = postRespawnCooldown;
+            suspendUntil = Time.time + (postRespawnCooldown + resumeDelay);
+            GameController.Instance?.Respawn();
+            //mismatchTimer = 0;
+           // cooldownTimer =postRespawnCooldown;
         }
 
         if (cooldownTimer > 0)

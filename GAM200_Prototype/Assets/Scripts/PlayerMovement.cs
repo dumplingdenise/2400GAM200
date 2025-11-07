@@ -23,20 +23,32 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private bool isGrounded;
+    private bool wasGrounded;
     private bool isCrouching;
     private bool canControl = true;
     private bool isTouchingWall = false;
     private bool isJumping = false;
 
-    /*[Header("SFX")]
+    [Header("SFX")]
     [SerializeField] AudioSource sfx;
     [SerializeField] AudioClip jumpClip, landClip;
-    [SerializeField] public AudioSource footstepSource;*/
+    [SerializeField] AudioSource footstepSource;      // for playback
+    [SerializeField] AudioClip[] footstepClips;       // drag multiple footstep sounds here
+    [SerializeField] float walkThreshold = 0.05f;     // min X speed to count as walking
+    [SerializeField] float footstepMaxVol = 1f;       // target loop volume when walking
+    [SerializeField] float footstepFade = 12f;        // fade speed per second
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+
+        if (footstepSource)
+        {
+            footstepSource.loop = true;
+            footstepSource.playOnAwake = false;
+            footstepSource.spatialBlend = 0f; // 2D
+        }
     }
 
     void Update()
@@ -49,15 +61,43 @@ public class PlayerMovement : MonoBehaviour
         HandleJump();
         HandleCrouch();
 
+        UpdateFootsteps();
+
     }
 
     void CheckGround()
     {
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
-        if (isGrounded)
+        bool nowGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
+
+        // detect landing (was airborne -> now grounded)
+        if (!wasGrounded && nowGrounded)
         {
+            // stopped jumping
             isJumping = false;
+
+            // land SFX
+            if (sfx && landClip)
+            {
+                sfx.pitch = Random.Range(0.98f, 1.02f);
+                sfx.PlayOneShot(landClip);
+            }
         }
+
+        isGrounded = nowGrounded;
+        wasGrounded = nowGrounded;
+
+        /*  isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundRadius, groundLayer);
+          if (isGrounded)
+          {
+              isJumping = false;
+
+              // land SFX
+              if (sfx && landClip)
+              {
+                  sfx.pitch = Random.Range(0.98f, 1.02f);
+                  sfx.PlayOneShot(landClip);
+              }
+          } */
     }
 
     void HandleMovement()
@@ -116,12 +156,12 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             isJumping = true;
 
-            /*if (sfx && jumpClip)
+            if (sfx && jumpClip)
             {
                 //sfx
                 sfx.pitch = Random.Range(0.98f, 1.02f);
                 sfx.PlayOneShot(jumpClip);
-            }*/
+            }
         }          
     }
 
@@ -135,6 +175,33 @@ public class PlayerMovement : MonoBehaviour
         // placeholder for ladder trigger logic
         return false;
     }*/
+
+    //SFX FOR FOOTSTEP
+    void UpdateFootsteps()
+    {
+        if (!footstepSource) return;
+
+        bool walking = isGrounded && Mathf.Abs(rb.linearVelocity.x) > walkThreshold && !isCrouching;
+
+        if (walking)
+        {
+            // only play new step if previous step finished
+            if (!footstepSource.isPlaying)
+            {
+                if (footstepClips != null && footstepClips.Length > 0)
+                {
+                    AudioClip clip = footstepClips[Random.Range(0, footstepClips.Length)];
+                    footstepSource.pitch = Random.Range(0.95f, 1.05f);
+                    footstepSource.PlayOneShot(clip);
+                }
+            }
+        }
+        else
+        {
+            // stop immediately when not walking
+            footstepSource.Stop();
+        }
+    }
 
     public void SetActiveControl(bool active)
     {

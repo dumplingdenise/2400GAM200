@@ -2799,6 +2799,14 @@ MonoBehaviour:
     m_Bits: 8704
   canClimb: 0
   climbSpeed: 3
+  sfx: {fileID: 0}
+  jumpClip: {fileID: 0}
+  landClip: {fileID: 0}
+  footstepSource: {fileID: 0}
+  footstepClips: []
+  walkThreshold: 0.05
+  footstepMaxVol: 1
+  footstepFade: 12
 --- !u!114 &328798043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8424,6 +8432,19 @@ MonoBehaviour:
     m_Bits: 2560
   canClimb: 0
   climbSpeed: 3
+  sfx: {fileID: 1202808487}
+  jumpClip: {fileID: 8300000, guid: d4b0d733f45b26542a096ba4c4fccd65, type: 3}
+  landClip: {fileID: 8300000, guid: a8ab4f6ad44c1144e88c9675b62f7687, type: 3}
+  footstepSource: {fileID: 1748033587}
+  footstepClips:
+  - {fileID: 8300000, guid: 6f540ff440efe804283e98f42f892aaf, type: 3}
+  - {fileID: 8300000, guid: de121d0cdea7a2144a3be0a3d62e6111, type: 3}
+  - {fileID: 8300000, guid: 7b17a7af1fb3a6d43aaa0db0e0c4ce60, type: 3}
+  - {fileID: 8300000, guid: 25c4e828b5796e94bac4ce4db3b54d15, type: 3}
+  - {fileID: 8300000, guid: 6d51ce5f99185284f9b3cd342b077cf6, type: 3}
+  walkThreshold: 0.05
+  footstepMaxVol: 1
+  footstepFade: 12
 --- !u!70 &1202808494
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -13712,6 +13733,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   physical: {fileID: 1202808493}
   shadow: {fileID: 328798042}
+  cameraController: {fileID: 0}
   linkState: 0
   controlState: 0
   vCam: {fileID: 1342845356}
