@@ -18,6 +18,17 @@ public class PlayerManager : MonoBehaviour
 
     [SerializeField] CinemachineCamera vCam;
 
+    void Awake()
+    {
+        // ✅ Prevent duplicates and persist across scenes
+        if (FindObjectsOfType<PlayerManager>().Length > 1)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
     void Start()
     {
         // initial state
