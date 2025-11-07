@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Rendering;
@@ -10,6 +11,12 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioSource musicSource;
     [SerializeField] AudioClip menuBGM;
     [SerializeField] AudioClip mainBGM;
+
+    //[SerializeField] AudioSource ambienceSource;    // second AudioSource for background SFX
+
+    // --- Layered ambience setup ---
+    [SerializeField] List<AudioClip> ambienceLayers;          // drag your ambient clips here (wind, curtain, etc.)
+    private List<AudioSource> ambienceLayerSources = new();   // runtime sources created per clip
 
     // Singleton instance so there is only one AudioManager in the game
     public static AudioManager instance;
@@ -126,11 +133,44 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
+    public void PlayLayeredAmbience(string sceneName)
+    {
+        // stop any old ambience first
+        foreach (var src in ambienceLayerSources)
+        {
+            if (src != null) Destroy(src);
+        }
+        ambienceLayerSources.Clear();
+
+        // no ambience in Menu
+        if (sceneName == "Menu") return;
+
+        // for Main or Boss scenes, spawn layers
+        if (sceneName == "Main" || sceneName == "BossLevel")
+        {
+            foreach (var clip in ambienceLayers)
+            {
+                if (clip == null) continue;
+
+                AudioSource src = gameObject.AddComponent<AudioSource>();
+                src.clip = clip;
+                src.loop = true;
+                src.volume = 0.8f; // you can tweak per layer later
+                src.spatialBlend = 0f; // 2D ambience
+                src.outputAudioMixerGroup = mixer.FindMatchingGroups("SFX")[0];
+                src.Play();
+
+                ambienceLayerSources.Add(src);
+            }
+        }
+    }
+
     // Called automatically whenever a new scene finishes loading.
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Change BGM depending on the scene’s name.
         PlayBGMForScene(scene.name);
+        PlayLayeredAmbience(scene.name);
     }
 
     private void OnDestroy()
