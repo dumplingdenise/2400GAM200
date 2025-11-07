@@ -170,4 +170,29 @@ public class NPCWorkerPattern : MonoBehaviour
             }
         }
     }
+
+    // --- Reset to starting state for boss level restarts ---
+    Vector3 startPos;
+
+    void Awake()
+    {
+        startPos = transform.position; // remember spawn position
+    }
+
+    public void ResetToStart()
+    {
+        StopAllCoroutines();
+        transform.position = startPos;
+        isMoving = false;
+
+        // reset animation to idle
+        if (animator != null)
+        {
+            animator.SetBool("IsMoving", false);
+            animator.SetBool("FacingRight", true);
+        }
+
+        if (sr != null)
+            sr.flipX = false;
+    }
 }
