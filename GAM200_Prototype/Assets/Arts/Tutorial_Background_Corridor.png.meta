@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Tutorial_Background_Corridor_0: 7051833471564232706
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
