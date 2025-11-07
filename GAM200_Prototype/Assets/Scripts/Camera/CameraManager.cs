@@ -51,15 +51,42 @@ public class CameraManager : MonoBehaviour
 
     public void LerpYDamping(bool isPlayerFalling)
     {
-        //_lerpYPanCoroutine = StartCoroutine(LerpYAction(isPlayerFalling));
+        _lerpYPanCoroutine = StartCoroutine(LerpYAction(isPlayerFalling));
     }
 
-   /* private IEnumerator LerpYAction (bool isPlayerFalling)
+    private IEnumerator LerpYAction (bool isPlayerFalling)
     {
         IsLerpingYDamping = true;
 
+        //grab the starting damping amount
+        float startDampAmount = _framingTransposer.m_YDamping;
+        float endDampAmount = 0f;
+
+        //determine the end damping amount
+        if (isPlayerFalling )
+        {
+            endDampAmount = _fallPanAmount;
+            LerpedFromPlayerFalling = true;
+        }
+        else
+        {
+            endDampAmount = _normYPanAmount;
+        }
+
+        //lerp the pan amount
+        float elapsedTime = 0f;
+        while (elapsedTime < _fallYPanTime)
+        {
+            elapsedTime += Time.deltaTime;
+
+            float lerpedPanAmount = Mathf.Lerp(startDampAmount, endDampAmount, (elapsedTime / _fallYPanTime));
+            _framingTransposer.m_AdjustmentMode.YDamping = lerpedPanAmount;
+
+            yield return null;
+        }
+
         IsLerpingYDamping = false;
-    } */
+    } 
 
     #endregion
 }
