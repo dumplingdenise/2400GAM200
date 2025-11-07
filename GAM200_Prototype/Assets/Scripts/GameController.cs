@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
@@ -72,11 +72,14 @@ public class GameController : MonoBehaviour
 
     void Awake()
     {
-        // singleton pattern for global access
-        if (Instance == null)
-            Instance = this;
-        else
+        // Singleton pattern — keep only one controller
+        if (Instance != null && Instance != this)
+        {
             Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject); // ✅ stays alive between scenes
 
         ColorUtility.TryParseHtmlString("#323232", out activeColor);
         ColorUtility.TryParseHtmlString("#FFFFFF", out inactiveColor);
@@ -104,6 +107,21 @@ public class GameController : MonoBehaviour
         if (playerManager != null)
         {
             currentCheckpoint = (startPoint != null) ? startPoint : playerManager.physical.transform;
+        }
+
+        if (currentChapterName == "Chapter 2")
+        {
+            Transform spawn = GameObject.Find("Chapter2_StartPoint")?.transform;
+            if (spawn != null && playerManager != null)
+            {
+                playerManager.physical.transform.position = spawn.position;
+                playerManager.shadow.transform.position = spawn.position + Vector3.left;
+                Debug.Log("Spawned player at Chapter 2 start point");
+            }
+            else
+            {
+                Debug.LogWarning("No Chapter2_StartPoint or PlayerManager found in boss scene.");
+            }
         }
     }
 

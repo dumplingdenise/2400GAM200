@@ -661,8 +661,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -270, y: 226}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 80, y: 226}
+  m_SizeDelta: {x: 1001.6942, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &120711165
 MonoBehaviour:
@@ -686,8 +686,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Oh No! The Rat King has locked your skills
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 07c4afabf5efe4542b90bc9f96cafc55, type: 2}
+  m_sharedMaterial: {fileID: 1427631947674480434, guid: 07c4afabf5efe4542b90bc9f96cafc55, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -711,8 +711,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -749,7 +749,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -494.72266, w: 0}
+  m_margin: {x: 0, y: 3.9069214, z: -7.376587, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1625,7 +1625,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &328603514
 Transform:
   m_ObjectHideFlags: 0
@@ -1654,6 +1654,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentGameState: 0
+  fadeManager: {fileID: 0}
   PausedPanel: {fileID: 1255290250}
   settingsPanel: {fileID: 885116309}
   backBtn: {fileID: 748929352}
@@ -1669,6 +1670,12 @@ MonoBehaviour:
   btnClickSound: {fileID: 8300000, guid: 8de402ba9a4d8bd43b38a6b315189bc9, type: 3}
   musicSlider: {fileID: 1136744224}
   sfxSlider: {fileID: 1837296747}
+  playerManager: {fileID: 0}
+  startPoint: {fileID: 0}
+  respawnOffset: {x: 0, y: 0.5}
+  currentChapterCheckpoint: {fileID: 0}
+  currentChapterIndex: 0
+  currentChapterName: Tutorial
 --- !u!82 &328603516
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1951,6 +1958,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8704
+  canClimb: 0
+  climbSpeed: 3
 --- !u!114 &328798043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1965,6 +1974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   followSpeed: 8
+  followDistance: 0.8
 --- !u!1 &382954292
 GameObject:
   m_ObjectHideFlags: 0
@@ -4769,6 +4779,8 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 2560
+  canClimb: 0
+  climbSpeed: 3
 --- !u!1 &1235577934
 GameObject:
   m_ObjectHideFlags: 0
@@ -6361,6 +6373,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.15512213, y: 1.1289481, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1625655304
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1625655305}
+  m_Layer: 0
+  m_Name: Chapter2_StartPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1625655305
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625655304}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1009.7969, y: 589.01166, z: -5.3637767}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7978,7 +8021,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2050137047
 Transform:
   m_ObjectHideFlags: 0
@@ -8088,6 +8131,7 @@ RectTransform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1625655305}
   - {fileID: 328603514}
   - {fileID: 1625495297}
   - {fileID: 1303939792}
