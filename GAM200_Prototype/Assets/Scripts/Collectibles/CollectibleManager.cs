@@ -18,7 +18,7 @@ public class CollectibleManager : MonoBehaviour
             return;
         }
         instance = this;
-        DontDestroyOnLoad(gameObject);
+        /*DontDestroyOnLoad(gameObject);*/
 
         // Load collectible count when the game starts
         LoadCollectibles();

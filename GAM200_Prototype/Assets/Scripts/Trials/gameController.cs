@@ -377,7 +377,7 @@ public class gameController : MonoBehaviour
 
     }
 
-    public void Respawn()
+    public void  alRespawn()
     {
         /*        // freeze control and physics so we can safely teleport
                 playerMove.enabled = false;

@@ -144,6 +144,9 @@ public class GameController : MonoBehaviour
         if (playerManager == null)
             playerManager = FindAnyObjectByType<PlayerManager>();
 
+        /*PausedPanel = GameObject.Find("PausedPanel");
+        settingsPanel = GameObject.Find("SettingsPanel");*/
+
         // Chapter-based spawn logic
         if (scene.name == "BossLevel" || scene.name == "Chapter 2")
         {
@@ -155,17 +158,17 @@ public class GameController : MonoBehaviour
                 Debug.Log("[GameController] Spawned player at Chapter 2 start point");
             }
 
-            // Hide collectible UI if not needed in boss scene
+            /*// Hide collectible UI if not needed in boss scene
             var collectibleUI = FindObjectOfType<CollectibleUI>(true);
             if (collectibleUI != null)
-                collectibleUI.gameObject.SetActive(false);
+                collectibleUI.gameObject.SetActive(false);*/
         }
         else
         {
             // Normal chapters (show UI)
-            var collectibleUI = FindObjectOfType<CollectibleUI>(true);
+           /* var collectibleUI = FindObjectOfType<CollectibleUI>(true);
             if (collectibleUI != null)
-                collectibleUI.gameObject.SetActive(true);
+                collectibleUI.gameObject.SetActive(true);*/
         }
     }
 
@@ -298,6 +301,13 @@ public class GameController : MonoBehaviour
         currentChapterName = name;
 
         Debug.Log($"Chapter checkpoint set: {name} (Index {index}) at {cp.position}");
+
+       /* if (name == "Chapter 1")
+        {
+            var ui = FindAnyObjectByType<CollectibleUI>();
+            if (ui != null)
+                ui.ShowPermanently();
+        }*/
     }
 
     public void Respawn()
