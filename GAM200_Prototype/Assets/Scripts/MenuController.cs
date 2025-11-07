@@ -78,7 +78,7 @@ public class MenuController : MonoBehaviour
     public void PlayBtn()
     {
         PlayClickSound();
-        StartCoroutine(LoadSceneWithDelay("Main", 0.3f)); // 0.3s delay
+        StartCoroutine(LoadSceneWithDelay("CutScene", 0.3f)); // 0.3s delay
     }
     private IEnumerator LoadSceneWithDelay(string sceneName, float delay)
     {
