@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Tutorial_Midground_Corridor_without props_0: -2887336086092615484
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

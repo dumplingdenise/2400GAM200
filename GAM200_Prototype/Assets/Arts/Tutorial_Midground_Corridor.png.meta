@@ -159,7 +159,9 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Tutorial_Midground_Corridor_0: 1108533328859565353
+      Tutorial_Midground_Corridor_1: -235395548635546279
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

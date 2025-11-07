@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.Rendering;
@@ -11,8 +12,11 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip menuBGM;
     [SerializeField] AudioClip mainBGM;
 
-    [SerializeField] AudioSource ambienceSource;    // second AudioSource for background SFX
-    [SerializeField] AudioClip ambienceClip;        // e.g. wind, machinery, crowd noise
+    //[SerializeField] AudioSource ambienceSource;    // second AudioSource for background SFX
+
+    // --- Layered ambience setup ---
+    [SerializeField] List<AudioClip> ambienceLayers;          // drag your ambient clips here (wind, curtain, etc.)
+    private List<AudioSource> ambienceLayerSources = new();   // runtime sources created per clip
 
     // Singleton instance so there is only one AudioManager in the game
     public static AudioManager instance;
@@ -129,24 +133,35 @@ public class AudioManager : MonoBehaviour
         musicSource.Play();
     }
 
-    public void PlayAmbienceForScene(string sceneName)
+    public void PlayLayeredAmbience(string sceneName)
     {
-        if (ambienceSource == null) return;
-
-        // stop ambience for menus
-        if (sceneName == "Menu")
+        // stop any old ambience first
+        foreach (var src in ambienceLayerSources)
         {
-            ambienceSource.Stop();
-            return;
+            if (src != null) Destroy(src);
         }
+        ambienceLayerSources.Clear();
 
-        // play ambience for gameplay scenes only
-        if (sceneName == "Main" && ambienceClip != null)
+        // no ambience in Menu
+        if (sceneName == "Menu") return;
+
+        // for Main or Boss scenes, spawn layers
+        if (sceneName == "Main" || sceneName == "BossLevel")
         {
-            ambienceSource.clip = ambienceClip;
-            ambienceSource.loop = true;
-            ambienceSource.outputAudioMixerGroup = mixer.FindMatchingGroups("SFX")[0];
-            ambienceSource.Play();
+            foreach (var clip in ambienceLayers)
+            {
+                if (clip == null) continue;
+
+                AudioSource src = gameObject.AddComponent<AudioSource>();
+                src.clip = clip;
+                src.loop = true;
+                src.volume = 0.8f; // you can tweak per layer later
+                src.spatialBlend = 0f; // 2D ambience
+                src.outputAudioMixerGroup = mixer.FindMatchingGroups("SFX")[0];
+                src.Play();
+
+                ambienceLayerSources.Add(src);
+            }
         }
     }
 
@@ -155,7 +170,7 @@ public class AudioManager : MonoBehaviour
     {
         // Change BGM depending on the scene’s name.
         PlayBGMForScene(scene.name);
-        PlayAmbienceForScene(scene.name);
+        PlayLayeredAmbience(scene.name);
     }
 
     private void OnDestroy()
