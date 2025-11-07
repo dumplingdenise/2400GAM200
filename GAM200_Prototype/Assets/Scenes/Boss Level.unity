@@ -6403,7 +6403,7 @@ Transform:
   m_GameObject: {fileID: 1625655304}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1009.7969, y: 589.01166, z: -5.3637767}
+  m_LocalPosition: {x: -19.94, y: -4.34, z: -5.3637767}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8021,7 +8021,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2050137047
 Transform:
   m_ObjectHideFlags: 0
@@ -8053,6 +8053,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   physical: {fileID: 1202808493}
   shadow: {fileID: 328798042}
+  cameraController: {fileID: 0}
   linkState: 0
   controlState: 0
   vCam: {fileID: 1342845356}

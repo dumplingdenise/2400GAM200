@@ -26,6 +26,8 @@ public class ChapterCheckpointTrigger : MonoBehaviour
     public string nextSceneName;            // The name of the scene to load
     public float loadDelay = 0.5f;
 
+    private bool canOpen = false;
+
     void Start()
     {
         gc = FindAnyObjectByType<GameController>();
@@ -33,12 +35,15 @@ public class ChapterCheckpointTrigger : MonoBehaviour
     }
     void CheckUnlockStatus()
     {
+        // --- Check if this checkpoint should be locked or unlocked ---
         if (!requireCollectibles)
         {
+            // Chapters 0 & 1
             isUnlocked = true;
         }
         else
         {
+            // Chapter 2 (requires collectibles)
             if (CollectibleManager.instance == null)
             {
                 Debug.LogWarning("No CollectibleManager found — defaulting to unlocked.");
@@ -46,32 +51,23 @@ public class ChapterCheckpointTrigger : MonoBehaviour
                 return;
             }
 
-            isUnlocked = CollectibleManager.instance.totalCollected >= requiredCollectibles;
+            int collected = CollectibleManager.instance.totalCollected;
+            isUnlocked = collected >= requiredCollectibles;
         }
 
-        // Update visuals
+        // --- Update visuals only ---
         if (lockedVisual) lockedVisual.SetActive(!isUnlocked);
         if (unlockedVisual) unlockedVisual.SetActive(isUnlocked);
 
-        isUnlocked = true;
-
-        // Trigger checkpoint logic
-        triggered = true;
-
-        if (gc != null)
-        {
-            gc.SetChapterCheckpoint(transform, chapterIndex, chapterName);
-            Debug.Log($"Entered {chapterName} checkpoint (door unlocked)!");
-        }
-
-        // optional: disable collider if you only want it to trigger once
-        GetComponent<Collider2D>().enabled = false;
+        // ✅ Do NOT mark triggered or disable collider here.
+        // The checkpoint should only trigger when the player actually enters it.
     }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player") || triggered) return;
 
-        // Player reached the door – check collectible requirement now
+        // Player reached the door
         if (requireCollectibles)
         {
             if (CollectibleManager.instance == null)
@@ -82,7 +78,6 @@ public class ChapterCheckpointTrigger : MonoBehaviour
 
             int current = CollectibleManager.instance.totalCollected;
 
-            // 🔒 Not enough collectibles
             if (current < requiredCollectibles)
             {
                 int remaining = requiredCollectibles - current;
@@ -91,16 +86,21 @@ public class ChapterCheckpointTrigger : MonoBehaviour
 
                 if (PopupManager.instance != null)
                     PopupManager.instance.ShowMessage(msg);
+                return;
+            }
 
-                return; // stop here — door stays locked
+            // ✅ Player has enough collectibles now
+            if (!canOpen)
+            {
+                canOpen = true;
+                Debug.Log($"{chapterName} checkpoint now unlockable (triggered manually)");
             }
         }
 
-        // ✅ If player has enough collectibles, unlock and trigger checkpoint
+        // Show the visual and trigger logic
         if (lockedVisual) lockedVisual.SetActive(false);
         if (unlockedVisual) unlockedVisual.SetActive(true);
         isUnlocked = true;
-
         triggered = true;
 
         if (gc != null)
@@ -109,18 +109,6 @@ public class ChapterCheckpointTrigger : MonoBehaviour
             Debug.Log($"Entered {chapterName} checkpoint!");
         }
 
-        // 🔓 Unlock collectible UI when reaching Chapter 1
-        if (chapterName == "Chapter 1")
-        {
-            var collectibleUI = FindObjectOfType<CollectibleUI>(true);
-            if (collectibleUI != null)
-            {
-                collectibleUI.gameObject.SetActive(true);
-                collectibleUI.ShowUI();
-            }
-        }
-
-        // ✅ NEW: load boss scene if this checkpoint transitions to another scene
         if (loadNextScene && !string.IsNullOrEmpty(nextSceneName))
         {
             Debug.Log($"Loading next scene: {nextSceneName}");
@@ -128,10 +116,10 @@ public class ChapterCheckpointTrigger : MonoBehaviour
         }
         else
         {
-            // Optional: disable collider so it only triggers once
             GetComponent<Collider2D>().enabled = false;
         }
     }
+
 
     private IEnumerator LoadNextSceneAfterDelay()
     {
@@ -146,15 +134,13 @@ public class ChapterCheckpointTrigger : MonoBehaviour
     // Optional: Real-time unlock check
     void Update()
     {
-        if (requireCollectibles && !isUnlocked && CollectibleManager.instance != null)
+        // Only check collectible unlock readiness, don't change visuals yet
+        if (requireCollectibles && !canOpen && CollectibleManager.instance != null)
         {
             if (CollectibleManager.instance.totalCollected >= requiredCollectibles)
             {
-                isUnlocked = true;
-                if (lockedVisual) lockedVisual.SetActive(false);
-                if (unlockedVisual) unlockedVisual.SetActive(true);
-                /*if (unlockedSound) AudioSource.PlayClipAtPoint(unlockedSound, transform.position);*/
-                Debug.Log($"{chapterName} checkpoint unlocked in real-time!");
+                canOpen = true; // ✅ Now ready to open, but keep visuals locked
+                Debug.Log($"{chapterName} checkpoint now unlockable (waiting for player)");
             }
         }
     }

@@ -10,7 +10,7 @@ public class PlayerManager : MonoBehaviour
     [Header("Entity References")]
     public PlayerMovement physical;
     public PlayerMovement shadow;
-    /*public CameraController cameraController;*/
+    public CameraController cameraController;
 
     [Header("State")]
     public EntityLinkState linkState = EntityLinkState.Joined;
@@ -26,8 +26,6 @@ public class PlayerManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
-        DontDestroyOnLoad(gameObject);
     }
     void Start()
     {

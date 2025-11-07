@@ -1,4 +1,4 @@
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 using System.Collections;
 
@@ -31,9 +31,14 @@ public class PopupManager : MonoBehaviour
 
     public void ShowMessage(string message)
     {
+        // ✅ Make sure the popup is active before starting a coroutine
+        if (!gameObject.activeSelf)
+            gameObject.SetActive(true);
+
         StopAllCoroutines();
         StartCoroutine(ShowPopup(message));
     }
+
 
     IEnumerator ShowPopup(string message)
     {

@@ -24,6 +24,11 @@ public class CollectibleManager : MonoBehaviour
         LoadCollectibles();
     }
 
+    void Start()
+    {
+        ResetCollectibles(); // 🔥 Clears all collectible data at game start
+    }
+
     /// <summary>
     /// Add collectibles to the total count and save immediately.
     /// </summary>
