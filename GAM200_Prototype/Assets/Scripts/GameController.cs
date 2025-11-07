@@ -109,6 +109,7 @@ public class GameController : MonoBehaviour
             currentCheckpoint = (startPoint != null) ? startPoint : playerManager.physical.transform;
         }
 
+
         if (currentChapterName == "Chapter 2")
         {
             Transform spawn = GameObject.Find("Chapter2_StartPoint")?.transform;
@@ -122,6 +123,49 @@ public class GameController : MonoBehaviour
             {
                 Debug.LogWarning("No Chapter2_StartPoint or PlayerManager found in boss scene.");
             }
+        }
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Reconnect references
+        if (fadeManager == null)
+            fadeManager = FindAnyObjectByType<FadeManager>();
+        if (playerManager == null)
+            playerManager = FindAnyObjectByType<PlayerManager>();
+
+        // Chapter-based spawn logic
+        if (scene.name == "BossLevel" || scene.name == "Chapter 2")
+        {
+            Transform spawn = GameObject.Find("Chapter2_StartPoint")?.transform;
+            if (spawn != null && playerManager != null)
+            {
+                playerManager.physical.transform.position = spawn.position;
+                playerManager.shadow.transform.position = spawn.position + Vector3.left;
+                Debug.Log("[GameController] Spawned player at Chapter 2 start point");
+            }
+
+            // Hide collectible UI if not needed in boss scene
+            var collectibleUI = FindObjectOfType<CollectibleUI>(true);
+            if (collectibleUI != null)
+                collectibleUI.gameObject.SetActive(false);
+        }
+        else
+        {
+            // Normal chapters (show UI)
+            var collectibleUI = FindObjectOfType<CollectibleUI>(true);
+            if (collectibleUI != null)
+                collectibleUI.gameObject.SetActive(true);
         }
     }
 
