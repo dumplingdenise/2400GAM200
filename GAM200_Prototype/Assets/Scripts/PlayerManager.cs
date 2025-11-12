@@ -16,6 +16,12 @@ public class PlayerManager : MonoBehaviour
     public EntityLinkState linkState = EntityLinkState.Joined;
     public EntityControlState controlState = EntityControlState.Physical;
 
+    [Header("Audio References")]
+    [SerializeField] private AudioSource sfxSource;   // the AudioSource that will play the sounds
+    [SerializeField] private AudioClip splitSFX;
+    [SerializeField] private AudioClip mergeSFX;
+    [SerializeField] private AudioClip switchSFX;
+
     [SerializeField] CinemachineCamera vCam;
 
     void Awake()
@@ -58,12 +64,18 @@ public class PlayerManager : MonoBehaviour
             // --- Split ---
             linkState = EntityLinkState.Split;
             shadow.gameObject.SetActive(true);
+
+            PlaySFX(splitSFX);
             /*shadow.transform.position = physical.transform.position + Vector3.right * 1.5f;*/
         }
         else
         {
             // --- Join ---
             linkState = EntityLinkState.Joined;
+
+            // play merge sound
+            PlaySFX(mergeSFX);
+
 
             if (controlState == EntityControlState.Physical)
                 shadow.transform.position = physical.transform.position;
@@ -79,6 +91,9 @@ public class PlayerManager : MonoBehaviour
         controlState = (controlState == EntityControlState.Physical)
             ? EntityControlState.Shadow
             : EntityControlState.Physical;
+
+        // play switch sound
+        PlaySFX(switchSFX);
 
         UpdateControlContext();
     }
@@ -169,5 +184,13 @@ public class PlayerManager : MonoBehaviour
 
         // 👇 ADD THIS: allow shadow ↔ real-world-door collision always
         Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldDoorLayer, false);*/
+    }
+
+    private void PlaySFX(AudioClip clip)
+    {
+        if (sfxSource != null && clip != null)
+        {
+            sfxSource.PlayOneShot(clip);
+        }
     }
 }

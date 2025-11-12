@@ -35,7 +35,7 @@ public class BossLevelController : MonoBehaviour
     bool lockOnStart = true;
     bool showLockHint = true;
 
-   // public FadeManager fadeManager;  // Reference to the FadeManager
+    // public FadeManager fadeManager;  // Reference to the FadeManager
 
     float resumeDelay = 1.2f;
     float suspendUntil = 0f;
@@ -46,15 +46,15 @@ public class BossLevelController : MonoBehaviour
         playerRb = FindAnyObjectByType<Rigidbody2D>();
 
         if (gc == null) gc = GameController.Instance;
-        
+
         //boss.enabled = false;
         PrepareBossLevel();
 
-       /* playerManager.linkState = EntityLinkState.Joined;
-        playerManager.controlState = EntityControlState.Physical;
-        playerManager.UpdateControlContext();
-        playerManager.enabled = false;
-       */
+        /* playerManager.linkState = EntityLinkState.Joined;
+         playerManager.controlState = EntityControlState.Physical;
+         playerManager.UpdateControlContext();
+         playerManager.enabled = false;
+        */
 
         //isActive = true;
 
@@ -107,7 +107,7 @@ public class BossLevelController : MonoBehaviour
             suspendUntil = Time.time + (postRespawnCooldown + resumeDelay);
             GameController.Instance?.Respawn();
             //mismatchTimer = 0;
-           // cooldownTimer =postRespawnCooldown;
+            // cooldownTimer =postRespawnCooldown;
         }
 
         if (cooldownTimer > 0)
@@ -126,7 +126,7 @@ public class BossLevelController : MonoBehaviour
         playerManager.enabled = false; // Disable Switching Input
 
         boss.enabled = false;
-        
+
         foreach (NPCWorkerPattern follower in followers)
         {
             follower.enabled = false;
@@ -144,7 +144,7 @@ public class BossLevelController : MonoBehaviour
     {
         //if (started) return;
 
-        if(!collision.CompareTag("Player"))
+        if (!collision.CompareTag("Player"))
         {
             return;
         }
@@ -154,7 +154,7 @@ public class BossLevelController : MonoBehaviour
             StartCoroutine(BeginSequence());
         }
     }
-    
+
     IEnumerator BeginSequence()
     {
         yield return new WaitForSeconds(preRollDelay);
