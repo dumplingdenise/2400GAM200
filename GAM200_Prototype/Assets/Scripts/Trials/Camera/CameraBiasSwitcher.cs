@@ -6,7 +6,7 @@ using Unity.Cinemachine;
 public class CameraBiasSwitcher : MonoBehaviour
 {
     [SerializeField] CinemachineCamera vcam;
-    [SerializeField] gameController controller;
+   /* [SerializeField] gameController controller;*/
     [SerializeField] Transform playerRoot;
    // [SerializeField] float rightBias = 0.65f;
 

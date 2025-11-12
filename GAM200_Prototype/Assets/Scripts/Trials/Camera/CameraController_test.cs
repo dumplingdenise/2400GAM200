@@ -4,7 +4,7 @@ public class CameraController_test : MonoBehaviour
 {
     [SerializeField] Transform mainDoll;
     [SerializeField] Transform shadowDoll;
-    [SerializeField] gameController controller;
+   /* [SerializeField] gameController controller;*/
     [SerializeField] Vector3 offset = new Vector3(0, 1.5f, -10f);
    // [SerializeField] float followLerp = 0.15f;
 
