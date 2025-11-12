@@ -21,10 +21,13 @@ public class CameraController_test : MonoBehaviour
     [SerializeField] float currentLookahead;
     [SerializeField] float prevTargetX;
 
+    private PlayerManager pm;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        var t = (controller.currentMode == gameController.WorldState.Real) ? mainDoll : shadowDoll;
+        pm = FindAnyObjectByType<PlayerManager>();
+        Transform t = pm.controlState == EntityControlState.Physical ? pm.physical.transform : pm.shadow.transform;
         prevTargetX = t.position.x;
         currentLookahead = 0f;
     }
@@ -37,8 +40,11 @@ public class CameraController_test : MonoBehaviour
 
     void LateUpdate()
     {
-        var target = (controller.currentMode == gameController.WorldState.Real) ? mainDoll : shadowDoll;
-        
+        if (pm == null) return;
+
+        Transform target = pm.controlState == EntityControlState.Physical ? pm.physical.transform : pm.shadow.transform;
+        if (target == null) return;
+
         var targetPos = target.position;
 
         float vx = (Time.deltaTime > 0f) ? (targetPos.x - prevTargetX) / Time.deltaTime : 0f;
@@ -65,12 +71,15 @@ public class CameraController_test : MonoBehaviour
 
     public void SnapToTarget()
     {
-        var t = (controller.currentMode == gameController.WorldState.Real) ? mainDoll: shadowDoll;
+        if (pm == null) return;
+
+        Transform t = pm.controlState == EntityControlState.Physical ? pm.physical.transform : pm.shadow.transform;
+        if (t == null) return;
 
         transform.position = t.position + offset;
 
-        prevTargetX = t.position.x;   // reset velocity baseline
-        currentLookahead = 0f;        // avoid one-frame lookahead jump
+        prevTargetX = t.position.x; // reset velocity baseline
+        currentLookahead = 0f;   // avoid one-frame lookahead jump
 
     }
 }

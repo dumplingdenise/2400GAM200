@@ -980,7 +980,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &324588386
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3291,7 +3291,7 @@ MonoBehaviour:
   sfx: {fileID: 0}
   jumpClip: {fileID: 0}
   landClip: {fileID: 0}
-  footstepSource: {fileID: 0}
+  footstepSource: {fileID: 1748033587}
   footstepClips: []
   walkThreshold: 0.05
   footstepMaxVol: 1
@@ -5389,6 +5389,10 @@ MonoBehaviour:
   cameraController: {fileID: 0}
   linkState: 0
   controlState: 0
+  sfxSource: {fileID: 0}
+  splitSFX: {fileID: 0}
+  mergeSFX: {fileID: 0}
+  switchSFX: {fileID: 0}
   vCam: {fileID: 1342845356}
 --- !u!1 &2059090946
 GameObject:
