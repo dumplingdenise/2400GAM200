@@ -14238,7 +14238,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   physical: {fileID: 1202808493}
   shadow: {fileID: 328798042}
-  cameraController: {fileID: 0}
+  cameraController: {fileID: 465818925}
   linkState: 0
   controlState: 0
   sfxSource: {fileID: 2050137049}

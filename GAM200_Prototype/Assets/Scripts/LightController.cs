@@ -220,6 +220,8 @@ public class LightController : MonoBehaviour
 
             col.isTrigger = isTriggerState;
             s.shadowObj.tag = shadowTag;
+            /*col.isTrigger = false;
+            s.shadowObj.tag = "Untagged";*/
         }
     }
 }
