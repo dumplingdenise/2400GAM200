@@ -4276,8 +4276,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Test
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 07c4afabf5efe4542b90bc9f96cafc55, type: 2}
-  m_sharedMaterial: {fileID: 1427631947674480434, guid: 07c4afabf5efe4542b90bc9f96cafc55, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 31e97eef881321c48bfcb3b2f5a6ba12, type: 2}
+  m_sharedMaterial: {fileID: 7218512532774978804, guid: 31e97eef881321c48bfcb3b2f5a6ba12, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4845,8 +4845,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 07c4afabf5efe4542b90bc9f96cafc55, type: 2}
-  m_sharedMaterial: {fileID: 1427631947674480434, guid: 07c4afabf5efe4542b90bc9f96cafc55, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 31e97eef881321c48bfcb3b2f5a6ba12, type: 2}
+  m_sharedMaterial: {fileID: 7218512532774978804, guid: 31e97eef881321c48bfcb3b2f5a6ba12, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5867,7 +5867,7 @@ MonoBehaviour:
     wheel to rotate light direction'
   iconSprite: {fileID: -2864118060676132198, guid: 1f2bfb46a4b216a45948bbdf607550a7, type: 3}
   fadeDuration: 0.5
-  visibleDuration: 6
+  visibleDuration: 10
 --- !u!61 &851756245
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -9876,8 +9876,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -812.9, y: -505.5}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: -658.56396, y: -481}
+  m_SizeDelta: {x: 508.6722, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1390231169
 MonoBehaviour:
@@ -9926,8 +9926,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 50
+  m_fontSizeBase: 50
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -11707,7 +11707,7 @@ MonoBehaviour:
     physical objects'
   iconSprite: {fileID: 6906208671644474331, guid: 1f2bfb46a4b216a45948bbdf607550a7, type: 3}
   fadeDuration: 0.5
-  visibleDuration: 6
+  visibleDuration: 10
 --- !u!61 &1646139932
 BoxCollider2D:
   m_ObjectHideFlags: 0
