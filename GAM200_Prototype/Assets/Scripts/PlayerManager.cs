@@ -42,23 +42,23 @@ public class PlayerManager : MonoBehaviour
     void Update()
     {
         if (GameController.IsPaused) return;
-
         HandleInputs();
     }
 
     void HandleInputs()
     {
-        /*if (Input.GetKeyDown(KeyCode.E))*/
-        if (InputLockManager.instance.canSplit && Input.GetKeyDown(KeyCode.E))
-            ToggleLinkState();
+        if (Input.GetKeyDown(KeyCode.E))
+            if (InputLockManager.instance.canSplit && Input.GetKeyDown(KeyCode.E))
+                ToggleLinkState();
 
-        /*if (Input.GetKeyDown(KeyCode.Q) && linkState == EntityLinkState.Split)*/
-        if (InputLockManager.instance.canMerge && linkState == EntityLinkState.Split && Input.GetKeyDown(KeyCode.Q))
-            SwitchControl();
+        if (Input.GetKeyDown(KeyCode.Q) && linkState == EntityLinkState.Split)
+            if (InputLockManager.instance.canMerge && linkState == EntityLinkState.Split && Input.GetKeyDown(KeyCode.Q))
+                SwitchControl();
     }
 
     void ToggleLinkState()
     {
+
         if (linkState == EntityLinkState.Joined)
         {
             // --- Split ---
@@ -66,7 +66,7 @@ public class PlayerManager : MonoBehaviour
             shadow.gameObject.SetActive(true);
 
             PlaySFX(splitSFX);
-            /*shadow.transform.position = physical.transform.position + Vector3.right * 1.5f;*/
+            shadow.transform.position = physical.transform.position + Vector3.right * 1.5f;
         }
         else
         {
@@ -119,7 +119,7 @@ public class PlayerManager : MonoBehaviour
                 // Disable the follower script while shadow is directly controlled
                 follower.enabled = false;
                 follower.StopAnimation();
-            }                
+            }
         }
         else // Joined
         {
@@ -139,7 +139,7 @@ public class PlayerManager : MonoBehaviour
                 {
                     follower.enabled = true;
                     follower.target = physical.transform;
-                }                 
+                }
             }
         }
 
@@ -153,7 +153,7 @@ public class PlayerManager : MonoBehaviour
 
     void UpdateCollisionLayers()
     {
-        int realWorldLayer = LayerMask.NameToLayer("RealWorld");
+        /*int realWorldLayer = LayerMask.NameToLayer("RealWorld");
         int realLayer = LayerMask.NameToLayer("Real");
         int shadowWorldLayer = LayerMask.NameToLayer("ShadowWorld");
 
@@ -165,9 +165,9 @@ public class PlayerManager : MonoBehaviour
 
         // Shadow player → only collide with shadow world
         Physics2D.IgnoreLayerCollision(shadowWorldLayer, realLayer, controllingPhysical);
-        Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldLayer, controllingPhysical);
+        Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldLayer, controllingPhysical);*/
 
-        /*int realWorldLayer = LayerMask.NameToLayer("RealWorld");
+        int realWorldLayer = LayerMask.NameToLayer("RealWorld");
         int realLayer = LayerMask.NameToLayer("Real");
         int shadowWorldLayer = LayerMask.NameToLayer("ShadowWorld");
         int realWorldDoorLayer = LayerMask.NameToLayer("RealWorldDoor"); // 👈 add this
@@ -183,7 +183,7 @@ public class PlayerManager : MonoBehaviour
         Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldLayer, controllingPhysical);
 
         // 👇 ADD THIS: allow shadow ↔ real-world-door collision always
-        Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldDoorLayer, false);*/
+        Physics2D.IgnoreLayerCollision(shadowWorldLayer, realWorldDoorLayer, false);
     }
 
     private void PlaySFX(AudioClip clip)
@@ -194,3 +194,193 @@ public class PlayerManager : MonoBehaviour
         }
     }
 }
+
+// TESTING for shadow rise
+
+/*using UnityEngine;
+using Unity.Cinemachine;
+using static GameController;
+using System.Collections;
+
+public enum EntityLinkState { Joined, Split }
+public enum EntityControlState { Physical, Shadow }
+
+public class PlayerManager : MonoBehaviour
+{
+    public PlayerMovement physical;
+    public PlayerMovement shadow;
+    public CameraController cameraController;
+
+    public EntityLinkState linkState = EntityLinkState.Joined;
+    public EntityControlState controlState = EntityControlState.Physical;
+
+    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] private AudioClip splitSFX;
+    [SerializeField] private AudioClip mergeSFX;
+    [SerializeField] private AudioClip switchSFX;
+
+    [SerializeField] CinemachineCamera vCam;
+
+    private ShadowFollower follower;
+
+    void Awake()
+    {
+        follower = shadow.GetComponent<ShadowFollower>();
+    }
+
+    void Start()
+    {
+        UpdateControlContext();
+    }
+
+    void Update()
+    {
+        if (GameController.IsPaused) return;
+
+        if (InputLockManager.instance.canSplit && Input.GetKeyDown(KeyCode.E))
+            ToggleLinkState();
+
+        if (InputLockManager.instance.canMerge && linkState == EntityLinkState.Split && Input.GetKeyDown(KeyCode.Q))
+            SwitchControl();
+    }
+
+    void ToggleLinkState()
+    {
+        if (linkState == EntityLinkState.Joined)
+        {
+            // Split
+            linkState = EntityLinkState.Split;
+
+            physical.gameObject.SetActive(true);
+            shadow.gameObject.SetActive(true);
+
+            PlaySFX(splitSFX);
+
+            // Spawn behind physical
+            bool facingRight = physical.GetComponent<Animator>().GetBool("isFacingRight");
+            float dir = facingRight ? -1f : 1f;
+            shadow.transform.position =
+                physical.transform.position + new Vector3(dir * 0.5f, 0f, 0f);
+
+            // Shadow upright
+            follower.SetFlatMode(false);
+            StartCoroutine(RiseShadow());
+        }
+        else
+        {
+            // Merge
+            linkState = EntityLinkState.Joined;
+
+            PlaySFX(mergeSFX);
+
+            // Snap to same position
+            if (controlState == EntityControlState.Physical)
+                shadow.transform.position = physical.transform.position;
+            else
+                physical.transform.position = shadow.transform.position;
+
+            // Shadow flat
+            follower.SetFlatMode(true);
+        }
+
+        UpdateControlContext();
+    }
+
+    void SwitchControl()
+    {
+        controlState =
+            (controlState == EntityControlState.Physical) ?
+            EntityControlState.Shadow :
+            EntityControlState.Physical;
+
+        PlaySFX(switchSFX);
+        UpdateControlContext();
+    }
+
+    public void UpdateControlContext()
+    {
+        bool controllingPhysical = controlState == EntityControlState.Physical;
+
+        physical.SetActiveControl(controllingPhysical);
+        shadow.SetActiveControl(!controllingPhysical);
+
+        if (linkState == EntityLinkState.Split)
+        {
+            // Split mode: both upright
+            physical.gameObject.SetActive(true);
+            shadow.gameObject.SetActive(true);
+
+            follower.enabled = false;
+            follower.isFlatMode = false;
+
+            follower.StopAnimation();
+        }
+        else
+        {
+            // Joined mode
+            if (controlState == EntityControlState.Shadow)
+            {
+                // Shadow active, upright
+                physical.gameObject.SetActive(false);
+
+                follower.enabled = false;
+                follower.SetFlatMode(false);
+            }
+            else
+            {
+                // Physical active, shadow flat + following
+                physical.gameObject.SetActive(true);
+
+                follower.enabled = true;
+                follower.target = physical.transform;
+                follower.SetFlatMode(true);
+                *//*follower.isFlatMode = false;*//*
+            }
+        }
+
+        if (vCam != null)
+            vCam.Follow = controllingPhysical ? physical.transform : shadow.transform;
+
+        UpdateCollisionLayers();
+    }
+
+    void UpdateCollisionLayers()
+    {
+        int realWorld = LayerMask.NameToLayer("RealWorld");
+        int real = LayerMask.NameToLayer("Real");
+        int shadowWorld = LayerMask.NameToLayer("ShadowWorld");
+
+        bool isPhysical = controlState == EntityControlState.Physical;
+
+        Physics2D.IgnoreLayerCollision(realWorld, real, !isPhysical);
+        Physics2D.IgnoreLayerCollision(realWorld, shadowWorld, true);
+
+        Physics2D.IgnoreLayerCollision(shadowWorld, real, isPhysical);
+        Physics2D.IgnoreLayerCollision(shadowWorld, realWorld, isPhysical);
+    }
+
+    void PlaySFX(AudioClip clip)
+    {
+        if (sfxSource && clip)
+            sfxSource.PlayOneShot(clip);
+    }
+
+    IEnumerator RiseShadow()
+    {
+        Vector3 start = follower.flatLocalScale;
+        Vector3 end = follower.uprightLocalScale;
+
+        float t = 0;
+        while (t < 0.25f)
+        {
+            shadow.transform.localScale = Vector3.Lerp(start, end, t / 0.25f);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        shadow.transform.localScale = end;
+    }
+}*/
+
+
+
