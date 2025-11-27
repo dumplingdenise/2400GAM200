@@ -14242,9 +14242,9 @@ MonoBehaviour:
   linkState: 0
   controlState: 0
   sfxSource: {fileID: 2050137049}
-  splitSFX: {fileID: 8300000, guid: 4da8f081e3f7fed48942df5cc133e0a4, type: 3}
-  mergeSFX: {fileID: 8300000, guid: 4da8f081e3f7fed48942df5cc133e0a4, type: 3}
-  switchSFX: {fileID: 8300000, guid: 1e613c7483c3e74459acc3b2578e2412, type: 3}
+  splitSFX: {fileID: 8300000, guid: e1bda83395640ef479121a2ed20ba801, type: 3}
+  mergeSFX: {fileID: 8300000, guid: e8de4b26cb498004d8e3a657be6a30b2, type: 3}
+  switchSFX: {fileID: 8300000, guid: 4a667ab3564ba3d4184af016326af056, type: 3}
   vCam: {fileID: 1342845356}
 --- !u!82 &2050137049
 AudioSource:
@@ -14259,7 +14259,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.48
   m_Pitch: 1
   Loop: 0
   Mute: 0
