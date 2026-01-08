@@ -171,17 +171,17 @@ public class MenuController : MonoBehaviour
             case "Play":
                 animator.SetBool("isHover", true);               
                 playBtnText.color = newColor;
-                playBtnText.fontSize = 150;
+                playBtnText.fontSize = 120;
                 break;
             case "Settings":
                 animator.SetBool("isHover", true);
                 settingsBtnText.color = newColor;
-                settingsBtnText.fontSize = 130;
+                settingsBtnText.fontSize = 120;
                 break;
             case "Exit":
                 animator.SetBool("isHover", true);
                 exitBtnText.color = newColor;
-                exitBtnText.fontSize = 150;
+                exitBtnText.fontSize = 120;
                 break;
         }
     }
