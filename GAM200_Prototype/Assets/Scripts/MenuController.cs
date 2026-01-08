@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class MenuController : MonoBehaviour
 {
+    [Header("Main menu button texts")]
+    public TextMeshProUGUI playBtnText;
+    public TextMeshProUGUI settingsBtnText;
+    public TextMeshProUGUI exitBtnText;
+
     [Header("Settings panel & Btns")]
     public GameObject settingsPanel;
     public Button settingsBtn;
@@ -34,13 +39,11 @@ public class MenuController : MonoBehaviour
     private Color activeColor;
     private Color inactiveColor;
 
-    [Header("Main Menu Spotlights")]
-    public GameObject playUnlit;
-    public GameObject playLit;
-    public GameObject settingsUnlit;
-    public GameObject settingsLit;
-    public GameObject exitUnlit;
-    public GameObject exitLit;
+    public Animator animator;
+
+    [Header("Fade")]
+    public CanvasGroup fadeGroup;
+    public float fadeDuration = 0.5f;
 
     private void Awake()
     {
@@ -55,9 +58,6 @@ public class MenuController : MonoBehaviour
         settingsPanel.SetActive(false);
         ShowControlsTab();
 
-        SetSpotlightState(playUnlit, playLit, true);
-        SetSpotlightState(settingsUnlit, settingsLit, true);
-        SetSpotlightState(exitUnlit, exitLit, true);
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -78,12 +78,35 @@ public class MenuController : MonoBehaviour
     public void PlayBtn()
     {
         PlayClickSound();
-        StartCoroutine(LoadSceneWithDelay("CutScene", 0.3f)); // 0.3s delay
+        /*StartCoroutine(LoadSceneWithDelay("CutScene", 0.3f)); // 0.3s delay*/
+        StartCoroutine(FadeAndLoad("CutScene"));
     }
-    private IEnumerator LoadSceneWithDelay(string sceneName, float delay)
+    /*private IEnumerator LoadSceneWithDelay(string sceneName, float delay)
     {
         yield return new WaitForSeconds(delay);
         SceneManager.LoadScene(sceneName);
+    }*/
+
+    private IEnumerator FadeAndLoad(string sceneName)
+    {
+        fadeGroup.blocksRaycasts = true; // lock input
+        yield return StartCoroutine(FadeOut());
+        SceneManager.LoadScene(sceneName);
+    }
+
+    private IEnumerator FadeOut()
+    {
+        float t = 0f;
+
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            float n = t / fadeDuration;
+            fadeGroup.alpha = Mathf.SmoothStep(0f, 1f, n);
+            yield return null;
+        }
+
+        fadeGroup.alpha = 1f;
     }
     public void ExitBtn()
     {
@@ -139,25 +162,26 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    private void SetSpotlightState(GameObject unlit, GameObject lit, bool showUnlit)
-    {
-        if (unlit) unlit.SetActive(showUnlit);
-        if (lit) lit.SetActive(!showUnlit);
-    }
-
     // Called from EventTrigger
     public void OnHoverEnter(string buttonName)
     {
+        ColorUtility.TryParseHtmlString("#511B14", out Color newColor);
         switch (buttonName)
         {
             case "Play":
-                SetSpotlightState(playUnlit, playLit, false);
+                animator.SetBool("isHover", true);               
+                playBtnText.color = newColor;
+                playBtnText.fontSize = 150;
                 break;
             case "Settings":
-                SetSpotlightState(settingsUnlit, settingsLit, false);
+                animator.SetBool("isHover", true);
+                settingsBtnText.color = newColor;
+                settingsBtnText.fontSize = 130;
                 break;
             case "Exit":
-                SetSpotlightState(exitUnlit, exitLit, false);
+                animator.SetBool("isHover", true);
+                exitBtnText.color = newColor;
+                exitBtnText.fontSize = 150;
                 break;
         }
     }
@@ -167,13 +191,16 @@ public class MenuController : MonoBehaviour
         switch (buttonName)
         {
             case "Play":
-                SetSpotlightState(playUnlit, playLit, true);
+                animator.SetBool("isHover", false);
+                playBtnText.fontSize = 100;
                 break;
             case "Settings":
-                SetSpotlightState(settingsUnlit, settingsLit, true);
+                animator.SetBool("isHover", false);
+                settingsBtnText.fontSize = 100;
                 break;
             case "Exit":
-                SetSpotlightState(exitUnlit, exitLit, true);
+                animator.SetBool("isHover", false);
+                exitBtnText.fontSize = 100;
                 break;
         }
     }

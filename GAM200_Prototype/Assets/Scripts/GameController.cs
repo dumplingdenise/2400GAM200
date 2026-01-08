@@ -209,6 +209,13 @@ public class GameController : MonoBehaviour
     public void MainMenu()
     {
         PlayClickSound();
+        currentGameState = GameState.Playing;
+
+        if (PausedPanel)
+            PausedPanel.SetActive(false);
+
+        if (settingsPanel)
+            settingsPanel.SetActive(false);
         StartCoroutine(LoadSceneWithDelay("Menu", 0.25f));
     }
 
